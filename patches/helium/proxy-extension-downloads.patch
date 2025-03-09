@@ -1,6 +1,6 @@
 --- a/extensions/common/extension_urls.cc
 +++ b/extensions/common/extension_urls.cc
-@@ -42,6 +42,8 @@ const char kChromeWebstoreBaseURL[] = "h
+@@ -43,6 +43,8 @@ const char kChromeWebstoreBaseURL[] = "h
  const char kNewChromeWebstoreBaseURL[] = "https://chromewebstore.google.com/";
  const char kChromeWebstoreUpdateURL[] =
      "https://clients2.google.com/service/update2/crx";
@@ -9,7 +9,7 @@
  
  const char kAppMenuUtmSource[] = "ext_app_menu";
  const char kExtensionsMenuUtmSource[] = "ext_extensions_menu";
-@@ -99,13 +101,10 @@ base::AutoReset<const GURL*> SetItemSnip
+@@ -100,13 +102,10 @@ base::AutoReset<const GURL*> SetItemSnip
  }
  
  GURL GetDefaultWebstoreUpdateUrl() {
@@ -24,6 +24,20 @@
    return GetDefaultWebstoreUpdateUrl();
  }
  
+--- a/components/policy/core/common/policy_loader_common.cc
++++ b/components/policy/core/common/policy_loader_common.cc
+@@ -24,9 +24,9 @@ namespace {
+ // implementation. And the Chrome one can be moved to c/b/policy.
+ // From extensions/common/extension_urls.cc
+ const char kChromeWebstoreUpdateURL[] =
+-    "https://clients2.google.com/service/update2/crx";
++    "https://services.helium.computer/ext/webstore";
+ const char16_t kChromeWebstoreUpdateURL16[] =
+-    u"https://clients2.google.com/service/update2/crx";
++    u"https://services.helium.computer/ext/webstore";
+ 
+ // From chrome/browser/extensions/extension_management_constants.cc
+ const char kWildcard[] = "*";
 --- a/extensions/common/extension_urls.h
 +++ b/extensions/common/extension_urls.h
 @@ -35,6 +35,7 @@ namespace extension_urls {
@@ -169,3 +183,14 @@
    return downloader;
  }
  
+--- a/chrome/browser/extensions/policy_handlers.cc
++++ b/chrome/browser/extensions/policy_handlers.cc
+@@ -154,7 +154,7 @@ bool ExtensionInstallForceListPolicyHand
+     size_t pos = entry_string.find(';');
+     if (pos == std::string::npos) {
+       extension_id = entry_string;
+-      update_url = extension_urls::kChromeWebstoreUpdateURL;
++      update_url = extension_urls::kHeliumProxyWebstoreUpdateURL;
+     } else {
+       extension_id = entry_string.substr(0, pos);
+       update_url = entry_string.substr(pos + 1);

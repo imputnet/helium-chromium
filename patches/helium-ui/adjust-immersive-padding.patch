@@ -1,6 +1,6 @@
 --- a/chrome/browser/ui/views/frame/immersive_mode_controller_mac.mm
 +++ b/chrome/browser/ui/views/frame/immersive_mode_controller_mac.mm
-@@ -41,7 +41,7 @@ namespace {
+@@ -42,7 +42,7 @@ namespace {
  // values in BrowserNonClientFrameViewMac::GetCaptionButtonInsets don't account
  // for a window with an NSToolbar.
  constexpr int kTrafficLightsWidth = 62;
@@ -9,7 +9,7 @@
  
  class ImmersiveModeFocusSearchMac : public views::FocusSearch {
   public:
-@@ -228,11 +228,9 @@ void ImmersiveModeControllerMac::SetEnab
+@@ -229,11 +229,9 @@ void ImmersiveModeControllerMac::SetEnab
  gfx::Insets ImmersiveModeControllerMac::GetTabStripRegionViewInsets() {
    int right_left_inset = kTabAlignmentInset + kTrafficLightsWidth;
  

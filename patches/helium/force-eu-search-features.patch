@@ -1,6 +1,6 @@
 --- a/chrome/browser/ui/webui/settings/settings_localized_strings_provider.cc
 +++ b/chrome/browser/ui/webui/settings/settings_localized_strings_provider.cc
-@@ -32,7 +32,6 @@
+@@ -31,7 +31,6 @@
  #include "chrome/browser/profiles/profile_attributes_storage.h"
  #include "chrome/browser/profiles/profile_manager.h"
  #include "chrome/browser/profiles/profile_shortcut_manager.h"
@@ -8,7 +8,7 @@
  #include "chrome/browser/signin/account_consistency_mode_manager.h"
  #include "chrome/browser/signin/account_consistency_mode_manager_factory.h"
  #include "chrome/browser/signin/chrome_signin_client_factory.h"
-@@ -86,7 +85,6 @@
+@@ -85,7 +84,6 @@
  #include "components/safe_browsing/core/common/features.h"
  #include "components/safe_browsing/core/common/hashprefix_realtime/hash_realtime_utils.h"
  #include "components/saved_tab_groups/public/features.h"
@@ -16,7 +16,7 @@
  #include "components/signin/public/base/signin_buildflags.h"
  #include "components/signin/public/base/signin_switches.h"
  #include "components/strings/grit/components_branded_strings.h"
-@@ -2350,16 +2348,9 @@ void AddSearchStrings(content::WebUIData
+@@ -2362,16 +2360,9 @@ void AddSearchStrings(content::WebUIData
    html_source->AddString("searchExplanationLearnMoreURL",
                           chrome::kOmniboxLearnMoreURL);
  
@@ -36,13 +36,11 @@
        "saveGuestChoiceText", IDS_SEARCH_ENGINE_CHOICE_GUEST_SESSION_CHECKBOX);
 --- a/components/search_engines/search_engine_choice/search_engine_choice_utils.cc
 +++ b/components/search_engines/search_engine_choice/search_engine_choice_utils.cc
-@@ -142,9 +142,7 @@ ChoiceScreenData::~ChoiceScreenData() =
+@@ -140,7 +140,7 @@ ChoiceScreenData::ChoiceScreenData(
+ ChoiceScreenData::~ChoiceScreenData() = default;
+ 
  bool IsEeaChoiceCountry(int country_id) {
-   // Consider the search engine list command line country override as an EEA
-   // region country to display the search engine choice screen.
--  return HasSearchEngineCountryListOverride()
--             ? true
--             : kEeaChoiceCountriesIds.contains(country_id);
+-  return regional_capabilities::IsEeaCountry(country_id);
 +  return true;
  }
  

@@ -1,6 +1,6 @@
---- a/components/search_engines/prepopulated_engines.json
-+++ b/components/search_engines/prepopulated_engines.json
-@@ -165,6 +165,17 @@
+--- a/third_party/search_engines_data/resources/definitions/prepopulated_engines.json
++++ b/third_party/search_engines_data/resources/definitions/prepopulated_engines.json
+@@ -163,6 +163,17 @@
        "id": 1
      },
  
@@ -31,7 +31,7 @@
  
 --- a/tools/metrics/histograms/enums.xml
 +++ b/tools/metrics/histograms/enums.xml
-@@ -28138,6 +28138,7 @@ Called by update_net_error_codes.py.-->
+@@ -21034,6 +21034,7 @@ Called by update_net_error_codes.py.-->
    <int value="72" label="YouSearch"/>
    <int value="73" label="StarterPackGemini"/>
    <int value="74" label="Lilo"/>

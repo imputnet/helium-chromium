@@ -25,7 +25,7 @@
  
  #if BUILDFLAG(OS_LEVEL_GEOLOCATION_PERMISSION_SUPPORTED)
      if (features::IsOsLevelGeolocationPermissionSupportEnabled()) {
-@@ -476,7 +479,7 @@ bool LocationBarView::IsInitialized() co
+@@ -489,7 +492,7 @@ bool LocationBarView::IsInitialized() co
  
  int LocationBarView::GetBorderRadius() const {
    return ChromeLayoutProvider::Get()->GetCornerRadiusMetric(
@@ -34,7 +34,7 @@
  }
  
  std::unique_ptr<views::Background> LocationBarView::CreateRoundRectBackground(
-@@ -746,7 +749,7 @@ void LocationBarView::Layout(PassKey) {
+@@ -759,7 +762,7 @@ void LocationBarView::Layout(PassKey) {
    // The padding between the left edges of the location bar and the LHS icon
    // (e.g. the page info icon, the google G icon, the selected suggestion icon,
    // etc)
@@ -43,7 +43,7 @@
    // The padding between the LHS icon and the text.
    int text_left = 8;
    // Indentation to match the suggestion icons & texts.
-@@ -1213,7 +1216,7 @@ int LocationBarView::GetMinimumTrailingW
+@@ -1226,7 +1229,7 @@ int LocationBarView::GetMinimumTrailingW
  }
  
  gfx::Rect LocationBarView::GetLocalBoundsWithoutEndcaps() const {

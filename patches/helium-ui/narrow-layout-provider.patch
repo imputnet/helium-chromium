@@ -1,6 +1,6 @@
 --- a/ui/views/layout/layout_provider.cc
 +++ b/ui/views/layout/layout_provider.cc
-@@ -197,17 +197,17 @@ ShapeSysTokens GetShapeSysToken(ShapeCon
+@@ -199,17 +199,17 @@ ShapeSysTokens GetShapeSysToken(ShapeCon
    static constexpr auto shape_token_map =
        base::MakeFixedFlatMap<ShapeContextTokens, ShapeSysTokens>({
            {ShapeContextTokens::kBadgeRadius, ShapeSysTokens::kXSmall},

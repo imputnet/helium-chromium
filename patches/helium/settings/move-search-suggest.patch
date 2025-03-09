@@ -1,6 +1,6 @@
 --- a/chrome/browser/resources/settings/people_page/people_page.html
 +++ b/chrome/browser/resources/settings/people_page/people_page.html
-@@ -107,13 +107,6 @@ shown on non-ChromeOS platforms -->
+@@ -122,13 +122,6 @@ shown on non-ChromeOS platforms -->
            </div>
          </template> <!-- if="[[!shouldShowSyncAccountControl_()]]" -->
  
@@ -14,7 +14,7 @@
  <if expr="not chromeos_ash">
          <template is="dom-if" if="[[signinAllowed_]]">
            <cr-link-row id="manage-google-account"
-@@ -134,39 +127,6 @@ shown on non-ChromeOS platforms -->
+@@ -160,39 +153,6 @@ shown on non-ChromeOS platforms -->
  </if>
  
        </div>
@@ -74,7 +74,7 @@
        <settings-toggle-button id="priceEmailNotificationsToggle"
 --- a/chrome/browser/resources/settings/privacy_page/personalization_options.ts
 +++ b/chrome/browser/resources/settings/privacy_page/personalization_options.ts
-@@ -256,14 +256,6 @@ export class SettingsPersonalizationOpti
+@@ -257,14 +257,6 @@ export class SettingsPersonalizationOpti
    }
    // </if>
  
@@ -91,7 +91,7 @@
    }
 --- a/chrome/browser/resources/settings/route.ts
 +++ b/chrome/browser/resources/settings/route.ts
-@@ -189,13 +189,6 @@ function createRoutes(): SettingsRoutes
+@@ -190,13 +190,6 @@ function createRoutes(): SettingsRoutes
      r.IMPORT_DATA = r.PEOPLE.createChild('/importData');
      r.IMPORT_DATA.isNavigableDialog = true;
      // </if>

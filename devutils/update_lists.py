@@ -109,8 +109,10 @@ DOMAIN_EXCLUDE_PREFIXES = [
     # Exclusions for Visual Studio Project generation with GN (PR #445)
     'tools/gn/',
     # Exclusions for files covered with other patches/unnecessary
-    'components/search_engines/prepopulated_engines.json',
+    'third_party/search_engines_data/resources/definitions/prepopulated_engines.json',
     'third_party/blink/renderer/core/dom/document.cc',
+    # Exclusion to allow download of sysroots
+    'build/linux/sysroot_scripts/sysroots.json',
     # Google Web Store extension stuff
     'tools/search_engine_choice/generate_search_engine_icons.py',
     'extensions/common/api/_api_features.json',

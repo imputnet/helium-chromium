@@ -12,7 +12,7 @@
 +++ b/chrome/browser/resources/new_tab_page/app.html
 @@ -1,38 +1,4 @@
  <div id="content">
--  ${this.lazyRender_ && this.microsoftAuthEnabled_ ? html`
+-  ${this.lazyRender_ && this.microsoftModuleEnabled_ ? html`
 -    <iframe id="microsoftAuth" src="${this.microsoftAuthIframePath_}"></iframe>
 -  ` : ''}
 -  ${this.lazyRender_ && this.oneGoogleBarEnabled_ ? html`

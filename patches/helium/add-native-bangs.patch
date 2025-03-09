@@ -34,7 +34,7 @@
  #endif  // COMPONENTS_SEARCH_ENGINES_TEMPLATE_URL_DATA_UTIL_H_
 --- a/components/search_engines/BUILD.gn
 +++ b/components/search_engines/BUILD.gn
-@@ -37,6 +37,8 @@ static_library("search_engines") {
+@@ -36,6 +36,8 @@ static_library("search_engines") {
      "search_terms_data.h",
      "template_url.cc",
      "template_url.h",
@@ -45,15 +45,15 @@
      "template_url_data_util.cc",
 --- a/components/search_engines/template_url_data_util.cc
 +++ b/components/search_engines/template_url_data_util.cc
-@@ -14,6 +14,7 @@
- #include "components/search_engines/prepopulated_engines.h"
+@@ -13,6 +13,7 @@
+ #include "components/search_engines/default_search_manager.h"
  #include "components/search_engines/template_url_data.h"
  #include "components/search_engines/template_url_starter_pack_data.h"
 +#include "components/search_engines/template_url_bang_manager.h"
+ #include "third_party/search_engines_data/resources/definitions/prepopulated_engines.h"
  #include "ui/base/l10n/l10n_util.h"
  #include "url/gurl.h"
- 
-@@ -533,3 +534,20 @@ std::unique_ptr<TemplateURLData> Templat
+@@ -507,3 +508,20 @@ std::unique_ptr<TemplateURLData> Templat
  
    return turl;
  }
@@ -67,7 +67,7 @@
 +  GURL favicon_url = GURL(bang.template_url).GetWithEmptyPath();
 +  favicon_url.path() = "/favicon.ico";
 +  turl.favicon_url = std::move(favicon_url);
-+  turl.starter_pack_id = 65536 + bang.id;
++  turl.bang_id = 1 + bang.id;
 +
 +  turl.safe_for_autoreplace = false;
 +  turl.GenerateSyncGUID();
@@ -76,7 +76,7 @@
 +}
 --- a/components/search_engines/template_url_service.cc
 +++ b/components/search_engines/template_url_service.cc
-@@ -57,7 +57,9 @@
+@@ -56,7 +56,9 @@
  #include "components/search_engines/search_engines_switches.h"
  #include "components/search_engines/search_terms_data.h"
  #include "components/search_engines/template_url.h"
@@ -86,7 +86,7 @@
  #include "components/search_engines/template_url_prepopulate_data.h"
  #include "components/search_engines/template_url_service_client.h"
  #include "components/search_engines/template_url_service_observer.h"
-@@ -70,6 +72,7 @@
+@@ -69,6 +71,7 @@
  #include "components/sync/protocol/search_engine_specifics.pb.h"
  #include "components/url_formatter/url_fixer.h"
  #include "net/base/registry_controlled_domains/registry_controlled_domain.h"
@@ -94,7 +94,7 @@
  #include "url/gurl.h"
  #include "url/origin.h"
  
-@@ -389,6 +392,7 @@ class TemplateURLService::PreLoadingProv
+@@ -423,6 +426,7 @@ class TemplateURLService::PreLoadingProv
  // TemplateURLService ---------------------------------------------------------
  TemplateURLService::TemplateURLService(
      PrefService& prefs,
@@ -102,7 +102,7 @@
      search_engines::SearchEngineChoiceService& search_engine_choice_service,
      std::unique_ptr<SearchTermsData> search_terms_data,
      const scoped_refptr<KeywordWebDataService>& web_data_service,
-@@ -399,6 +403,8 @@ TemplateURLService::TemplateURLService(
+@@ -433,6 +437,8 @@ TemplateURLService::TemplateURLService(
        search_engine_choice_service_(search_engine_choice_service),
        search_terms_data_(std::move(search_terms_data)),
        web_data_service_(web_data_service),
@@ -111,7 +111,7 @@
        client_(std::move(client)),
        dsp_change_callback_(dsp_change_callback),
        pre_loading_providers_(std::make_unique<PreLoadingProviders>()),
-@@ -414,10 +420,12 @@ TemplateURLService::TemplateURLService(
+@@ -448,10 +454,12 @@ TemplateURLService::TemplateURLService(
  
  TemplateURLService::TemplateURLService(
      PrefService& prefs,
@@ -124,7 +124,7 @@
            search_engine_choice_service,
            /*search_terms_data=*/std::make_unique<SearchTermsData>(),
            /*web_data_service=*/nullptr,
-@@ -1400,11 +1408,25 @@ void TemplateURLService::Load() {
+@@ -1390,11 +1398,25 @@ void TemplateURLService::Load() {
  
    if (web_data_service_) {
      load_handle_ = web_data_service_->GetKeywords(this);
@@ -181,7 +181,7 @@
        search_engines::SearchEngineChoiceService& search_engine_choice_service,
        base::span<const TemplateURLService::Initializer> initializers = {});
  
-@@ -706,6 +710,8 @@ class TemplateURLService final : public
+@@ -686,6 +690,8 @@ class TemplateURLService final : public
  
    void Init();
  
@@ -190,7 +190,7 @@
    // Simulate a loaded `TemplateURLService`.
    void ApplyInitializersForTesting(
        base::span<const TemplateURLService::Initializer> initializers);
-@@ -921,6 +927,10 @@ class TemplateURLService final : public
+@@ -885,6 +891,10 @@ class TemplateURLService final : public
    // Service used to store entries.
    scoped_refptr<KeywordWebDataService> web_data_service_;
  
@@ -433,7 +433,7 @@
 +
 --- a/components/omnibox/browser/autocomplete_input.cc
 +++ b/components/omnibox/browser/autocomplete_input.cc
-@@ -729,9 +729,9 @@ bool AutocompleteInput::HasHTTPSScheme(c
+@@ -743,9 +743,9 @@ bool AutocompleteInput::HasHTTPSScheme(c
  // static
  AutocompleteInput::FeaturedKeywordMode
  AutocompleteInput::GetFeaturedKeywordMode(const std::u16string& text) {
@@ -445,3 +445,88 @@
      return FeaturedKeywordMode::kPrefix;
    return FeaturedKeywordMode::kFalse;
  }
+--- a/components/search_engines/template_url_data.cc
++++ b/components/search_engines/template_url_data.cc
+@@ -26,7 +26,7 @@ namespace {
+ // Returns a GUID used for sync, which is random except for built-in search
+ // engines. The latter benefit from using a deterministic GUID, to make sure
+ // sync doesn't incur in duplicates for prepopulated engines.
+-std::string GenerateGUID(int prepopulate_id, int starter_pack_id) {
++std::string GenerateGUID(int prepopulate_id, int starter_pack_id, int bang_id) {
+   // We compute a GUID deterministically given |prepopulate_id| or
+   // |starter_pack_id|, using an arbitrary base GUID.
+   std::string guid;
+@@ -37,6 +37,9 @@ std::string GenerateGUID(int prepopulate
+   } else if (starter_pack_id > 0) {
+     guid = base::StringPrintf("ec205736-edd7-4022-a9a3-b431fc%06d",
+                               starter_pack_id);
++  } else if (bang_id > 0) {
++    guid = base::StringPrintf("2bfdeb48-cca4-4647-8843-7bb6c8%06d",
++                              bang_id);
+   } else {
+     guid = base::Uuid::GenerateRandomV4().AsLowercaseString();
+   }
+@@ -116,7 +119,7 @@ TemplateURLData::TemplateURLData(
+       created_from_play_api(false),
+       usage_count(0),
+       prepopulate_id(prepopulate_id),
+-      sync_guid(GenerateGUID(prepopulate_id, 0)),
++      sync_guid(GenerateGUID(prepopulate_id, 0, 0)),
+       preconnect_to_search_url(preconnect_to_search_url),
+       prefetch_likely_navigations(prefetch_likely_navigations) {
+   SetShortName(name);
+@@ -183,7 +186,7 @@ std::vector<uint8_t> TemplateURLData::Ge
+ }
+ 
+ void TemplateURLData::GenerateSyncGUID() {
+-  sync_guid = GenerateGUID(prepopulate_id, starter_pack_id);
++  sync_guid = GenerateGUID(prepopulate_id, starter_pack_id, bang_id);
+ }
+ 
+ size_t TemplateURLData::EstimateMemoryUsage() const {
+--- a/components/search_engines/template_url_data.h
++++ b/components/search_engines/template_url_data.h
+@@ -242,6 +242,9 @@ struct TemplateURLData {
+   // starter_pack_id > 0.
+   int starter_pack_id{0};
+ 
++  // This TemplateURL is a bang if bang_id > 0.
++  int bang_id{0};
++
+   friend bool operator==(const TemplateURLData&,
+                          const TemplateURLData&) = default;
+ 
+--- a/chrome/browser/ui/webui/settings/search_engines_handler.cc
++++ b/chrome/browser/ui/webui/settings/search_engines_handler.cc
+@@ -152,7 +152,8 @@ base::Value::Dict SearchEnginesHandler::
+   for (size_t i = last_default_engine_index; i < last_active_engine_index;
+        ++i) {
+     // Third argument is false, as the engine is not from an extension.
+-    actives.Append(CreateDictionaryForEngine(i, i == default_index));
++    if (list_controller_.GetTemplateURL(i)->bang_id() == 0)
++      actives.Append(CreateDictionaryForEngine(i, i == default_index));
+   }
+ 
+   // Build the third list (other search engines).
+--- a/components/search_engines/template_url.cc
++++ b/components/search_engines/template_url.cc
+@@ -1683,6 +1683,8 @@ bool TemplateURL::IsBetterThanConflictin
+         !engine->safe_for_autoreplace(),
+         // Prefer engines created by Play API.
+         engine->created_from_play_api(),
++        // Favor bangs over other auto-generated engines.
++        engine->bang_id() > 0,
+         // Favor prepopulated engines over other auto-generated engines.
+         engine->prepopulate_id() > 0,
+         // Favor starter pack engines over other auto-generated engines.
+--- a/components/search_engines/template_url.h
++++ b/components/search_engines/template_url.h
+@@ -819,6 +819,8 @@ class TemplateURL {
+ 
+   int starter_pack_id() const { return data().starter_pack_id; }
+ 
++  int bang_id() const { return data().bang_id; }
++
+   const std::vector<TemplateURLRef>& url_refs() const { return url_refs_; }
+   const TemplateURLRef& url_ref() const {
+     // Sanity check for https://crbug.com/781703.

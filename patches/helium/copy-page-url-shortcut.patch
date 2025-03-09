@@ -33,7 +33,7 @@
       ui::VKEY_N},
 --- a/chrome/browser/ui/views/accelerator_table.cc
 +++ b/chrome/browser/ui/views/accelerator_table.cc
-@@ -255,7 +255,7 @@ const AcceleratorMapping kDevToolsAccele
+@@ -254,7 +254,7 @@ const AcceleratorMapping kDevToolsAccele
      {ui::VKEY_J, ui::EF_SHIFT_DOWN | ui::EF_CONTROL_DOWN,
       IDC_DEV_TOOLS_CONSOLE},
      {ui::VKEY_C, ui::EF_SHIFT_DOWN | ui::EF_CONTROL_DOWN,

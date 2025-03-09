@@ -9,7 +9,7 @@
      }
      const auto* const color_provider = view->GetColorProvider();
      cc::PaintFlags flags;
-@@ -1379,7 +1379,7 @@ void AppMenu::PopulateMenu(MenuItemView*
+@@ -1393,7 +1393,7 @@ void AppMenu::PopulateMenu(MenuItemView*
      // Helper method that adds a background to a menu item.
      auto add_menu_row_background = [item](int vertical_margin,
                                            ui::ColorId background_color_id) {

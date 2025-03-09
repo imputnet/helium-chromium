@@ -1,0 +1,14 @@
+--- a/components/policy/core/common/helium_opinionated_policy_provider.cc
++++ b/components/policy/core/common/helium_opinionated_policy_provider.cc
+@@ -25,6 +25,11 @@ void HopProvider::RefreshPolicies(Policy
+   Set(policy_map, policy::key::kPasswordManagerEnabled, POLICY_LEVEL_MANDATORY, base::Value(false));
+   Set(policy_map, policy::key::kPasswordManagerPasskeysEnabled, POLICY_LEVEL_MANDATORY, base::Value(false));
+ 
++  base::Value::List preinstalled_extensions;
++  preinstalled_extensions.Append("cjpalhdlnbpafiamejdnhcphjbkeiagm"); // uBlock Origin
++  Set(policy_map, key::kExtensionInstallForcelist, POLICY_LEVEL_RECOMMENDED,
++    base::Value(std::move(preinstalled_extensions)));
++
+   UpdatePolicy(std::move(bundle));
+ }
+ 

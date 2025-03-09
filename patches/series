@@ -60,7 +60,6 @@ extra/ungoogled-chromium/add-flag-to-configure-extension-downloading.patch
 extra/ungoogled-chromium/add-flag-for-search-engine-collection.patch
 extra/ungoogled-chromium/add-flag-to-disable-beforeunload.patch
 extra/ungoogled-chromium/add-flag-to-force-punycode-hostnames.patch
-extra/ungoogled-chromium/spoof-webgl-renderer-info.patch
 extra/ungoogled-chromium/add-flag-to-show-avatar-button.patch
 extra/ungoogled-chromium/add-suggestions-url-field.patch
 extra/ungoogled-chromium/add-flag-to-hide-crashed-bubble.patch
@@ -106,6 +105,7 @@ extra/ungoogled-chromium/disable-downloads-page-referrer-url.patch
 extra/ungoogled-chromium/enable-extra-locales.patch
 extra/ungoogled-chromium/disable-chromelabs.patch
 extra/ungoogled-chromium/remove-pac-size-limit.patch
+extra/ungoogled-chromium/add-flag-to-spoof-webgl-renderer-info.patch
 
 helium/add-extra-channel-info.patch
 helium/change-chromium-branding.patch
@@ -115,6 +115,7 @@ helium/add-kagi-search.patch
 helium/copy-page-url-shortcut.patch
 
 helium/update-default-browser-prefs.patch
+helium/unbreak-chrome-webstore-url.patch
 helium/proxy-extension-downloads.patch
 helium/reenable-update-checks.patch
 helium/download-icons-from-source.patch
@@ -126,6 +127,10 @@ helium/enable-tab-muting.patch
 
 helium/settings/move-search-suggest.patch
 helium/settings/move-macos-settings.patch
+
+helium/hop/setup.patch
+helium/hop/disable-password-manager.patch
+helium/hop/preinstall-ublock-origin.patch
 
 helium-ui/always-use-better-ntp.patch
 helium-ui/clean-new-tab-page.patch
