@@ -194,3 +194,110 @@
      } else {
        extension_id = entry_string.substr(0, pos);
        update_url = entry_string.substr(pos + 1);
+--- a/chrome/browser/extensions/api/settings_private/prefs_util.cc
++++ b/chrome/browser/extensions/api/settings_private/prefs_util.cc
+@@ -339,6 +339,8 @@ const PrefsUtil::TypedPrefMap& PrefsUtil
+   // Helium services page
+   (*s_allowlist)[::prefs::kHeliumServicesEnabled] =
+       settings_api::PrefType::kBoolean;
++  (*s_allowlist)[::prefs::kHeliumExtProxyEnabled] =
++      settings_api::PrefType::kBoolean;
+   (*s_allowlist)[::prefs::kHeliumServicesOrigin] =
+       settings_api::PrefType::kString;
+ 
+--- a/chrome/browser/ui/browser_ui_prefs.cc
++++ b/chrome/browser/ui/browser_ui_prefs.cc
+@@ -172,6 +172,7 @@ void RegisterBrowserUserPrefs(user_prefs
+ 
+   {
+     registry->RegisterBooleanPref(prefs::kHeliumServicesEnabled, false);
++    registry->RegisterBooleanPref(prefs::kHeliumExtProxyEnabled, false);
+     registry->RegisterStringPref(prefs::kHeliumServicesOrigin, "");
+   }
+ 
+--- a/chrome/browser/resources/settings/privacy_page/services_page.html
++++ b/chrome/browser/resources/settings/privacy_page/services_page.html
+@@ -12,6 +12,11 @@
+     </settings-toggle-button>
+     <div class="cr-col">
+         <cr-collapse id="servicesCollapse" opened="[[prefs.helium.services.enabled.value]]">
++            <settings-toggle-button id="extProxyToggleButton"
++                pref="{{prefs.helium.services.ext_proxy}}"
++                label="$i18n{heliumExtProxyToggle}"
++                sub-label="$i18n{heliumExtProxyToggleDescription}">
++            </settings-toggle-button>
+         </cr-collapse>
+     </div>
+ </div>
+--- a/chrome/browser/ui/webui/settings/settings_localized_strings_provider.cc
++++ b/chrome/browser/ui/webui/settings/settings_localized_strings_provider.cc
+@@ -1842,6 +1842,10 @@ void AddPrivacyStrings(content::WebUIDat
+       {"heliumServicesToggle", IDS_SETTINGS_HELIUM_SERVICES_TOGGLE},
+       {"heliumServicesToggleDescription",
+         IDS_SETTINGS_HELIUM_SERVICES_TOGGLE_DESCRIPTION},
++      {"heliumExtProxyToggle",
++        IDS_SETTINGS_HELIUM_SERVICES_EXT_PROXY_TOGGLE},
++      {"heliumExtProxyToggleDescription",
++        IDS_SETTINGS_HELIUM_SERVICES_EXT_PROXY_TOGGLE_DESCRIPTION},
+       {"heliumOriginOverride", IDS_SETTINGS_HELIUM_SERVICES_OVERRIDE},
+       {"heliumOriginOverrideDescription",
+         IDS_SETTINGS_HELIUM_SERVICES_OVERRIDE_DESCRIPTION},
+--- a/chrome/app/settings_strings.grdp
++++ b/chrome/app/settings_strings.grdp
+@@ -2082,6 +2082,12 @@
+   <message name="IDS_SETTINGS_HELIUM_SERVICES_TOGGLE_DESCRIPTION" desc="Description of the toggle for enabling/disabling of all Helium services">
+     When enabled, Helium can connect to services for providing additional functionality, such as native bangs or extension downloads.
+   </message>
++  <message name="IDS_SETTINGS_HELIUM_SERVICES_EXT_PROXY_TOGGLE" desc="Toggle for enabling/disabling of downloading and proxying extensions">
++    Allow proxying extension downloads and updates
++  </message>
++  <message name="IDS_SETTINGS_HELIUM_SERVICES_EXT_PROXY_TOGGLE_DESCRIPTION" desc="Description of the toggle for enabling/disabling of downloading and proxying extensions">
++    When enabled, Helium will handle downloading and updating extensions from webstores while preserving your privacy.
++  </message>
+   <message name="IDS_SETTINGS_HELIUM_SERVICES_OVERRIDE" desc="Text input for overriding the Helium services server">
+     Use your own helium-services instance
+   </message>
+--- a/components/helium_services/pref_names.h
++++ b/components/helium_services/pref_names.h
+@@ -13,6 +13,9 @@ inline constexpr char kHeliumServicesEna
+ inline constexpr char kHeliumServicesOrigin[] =
+     "helium.services.origin_override";
+ 
++inline constexpr char kHeliumExtProxyEnabled[] =
++    "helium.services.ext_proxy";
++
+ }  // namespace prefs
+ 
+ #endif  // COMPONENTS_HELIUM_SERVICES_PREF_NAMES_H_
+--- a/components/helium_services/helium_services_helpers.cc
++++ b/components/helium_services/helium_services_helpers.cc
+@@ -55,6 +55,19 @@ bool ShouldAccessServices(const PrefServ
+     return prefs.GetBoolean(prefs::kHeliumServicesEnabled);
+ }
+ 
++bool ShouldAccessExtensionService(const PrefService& prefs) {
++    return ShouldAccessServices(prefs) &&
++            prefs.GetBoolean(prefs::kHeliumExtProxyEnabled);
++}
++
++GURL GetExtensionUpdateURL(const PrefService& prefs) {
++    if (!ShouldAccessExtensionService(prefs)) {
++        return GetDummyURL();
++    }
++
++    return GetServicesBaseURL(prefs).Resolve("/ext");
++}
++
+ void ConfigurePrefChangeRegistrarFor(std::string_view pref_name,
+     PrefChangeRegistrar& registrar, const base::RepeatingClosure& observer) {
+   registrar.Add(prefs::kHeliumServicesEnabled, observer);
+--- a/components/helium_services/helium_services_helpers.h
++++ b/components/helium_services/helium_services_helpers.h
+@@ -20,6 +20,7 @@ const char kHeliumDummyOrigin[] =
+ 
+ COMPONENT_EXPORT(HELIUM) GURL GetServicesBaseURL(const PrefService& prefs);
+ COMPONENT_EXPORT(HELIUM) GURL GetDummyURL();
++COMPONENT_EXPORT(HELIUM) GURL GetExtensionUpdateURL(const PrefService& prefs);
+ COMPONENT_EXPORT(HELIUM) std::optional<GURL> GetValidUserOverridenURL(std::string_view user_url_);
+ COMPONENT_EXPORT(HELIUM) void ConfigurePrefChangeRegistrarFor(std::string_view pref_name,
+                             PrefChangeRegistrar& registrar, const base::RepeatingClosure& observer);

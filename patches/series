@@ -110,6 +110,7 @@ extra/ungoogled-chromium/add-flag-to-spoof-webgl-renderer-info.patch
 extra/brave/chrome-importer-files.patch
 extra/brave/custom-importer.patch
 
+helium/services-prefs.patch
 helium/add-extra-channel-info.patch
 helium/change-chromium-branding.patch
 helium/scan-chrome-native-messaging-hosts.patch
