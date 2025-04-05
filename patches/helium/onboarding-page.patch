@@ -1,0 +1,164 @@
+--- a/tools/gritsettings/resource_ids.spec
++++ b/tools/gritsettings/resource_ids.spec
+@@ -1103,6 +1103,10 @@
+    "META": {"sizes": {"includes": [30],}},
+     "includes": [7480],
+   },
++  "<(SHARED_INTERMEDIATE_DIR)/components/helium_onboarding/resources.grd": {
++   "META": {"sizes": {"includes": [30],}},
++    "includes": [7510],
++  },
+   # END components/ section.
+ 
+   # START ios/ section.
+--- a/chrome/browser/BUILD.gn
++++ b/chrome/browser/BUILD.gn
+@@ -8409,6 +8409,7 @@ static_library("browser_generated_files"
+     "//chrome/browser/ui/webui/user_education_internals:mojo_bindings",
+     "//chrome/browser/v8_compile_hints/proto",
+     "//chrome/browser/web_applications/mojom:mojom_web_apps_enum",
++    "//components/helium_onboarding:generated_resources",
+   ]
+   if (is_android) {
+     public_deps += [
+--- a/chrome/chrome_paks.gni
++++ b/chrome/chrome_paks.gni
+@@ -435,11 +435,13 @@ template("chrome_extra_paks") {
+     if (!is_android && !is_chromeos_ash) {
+       sources += [
+         "$root_gen_dir/chrome/intro_resources.pak",
++        "$root_gen_dir/components/helium_onboarding/resources/helium_onboarding_generated.pak",
+         "$root_gen_dir/chrome/profile_picker_resources.pak",
+       ]
+       deps += [
+         "//chrome/browser/resources/intro:resources",
+         "//chrome/browser/resources/signin/profile_picker:resources",
++        "//components/helium_onboarding:generated_resources",
+       ]
+     }
+ 
+--- a/chrome/common/webui_url_constants.cc
++++ b/chrome/common/webui_url_constants.cc
+@@ -116,6 +116,7 @@ base::span<const base::cstring_view> Chr
+       kChromeUIPrefsInternalsHost,
+       kChromeUIProfileInternalsHost,
+       content::kChromeUIQuotaInternalsHost,
++      kHeliumSetupHost,
+       kChromeUISignInInternalsHost,
+       kChromeUISiteEngagementHost,
+ #if !BUILDFLAG(IS_ANDROID)
+--- a/chrome/common/webui_url_constants.h
++++ b/chrome/common/webui_url_constants.h
+@@ -556,6 +556,8 @@ inline constexpr char kChromeUIProfilePi
+ inline constexpr char kChromeUIProfilePickerStartupQuery[] = "startup";
+ inline constexpr char kChromeUIProfilePickerGlicQuery[] = "glic";
+ inline constexpr char kChromeUIProfilePickerUrl[] = "chrome://profile-picker/";
++inline constexpr char kHeliumSetupHost[] = "setup";
++inline constexpr char kHeliumSetupURL[] = "chrome://setup";
+ #endif
+ 
+ #if ((BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS)) && \
+--- a/chrome/browser/ui/BUILD.gn
++++ b/chrome/browser/ui/BUILD.gn
+@@ -230,6 +230,8 @@ static_library("ui") {
+     "webui/net_internals/net_internals_ui.h",
+     "webui/ntp_tiles_internals_ui.cc",
+     "webui/ntp_tiles_internals_ui.h",
++    "webui/onboarding/onboarding_page_ui.cc",
++    "webui/onboarding/onboarding_page_ui.h",
+     "webui/omnibox/omnibox_page_handler.cc",
+     "webui/omnibox/omnibox_page_handler.h",
+     "webui/omnibox/omnibox_ui.cc",
+--- a/chrome/browser/ui/webui/chrome_web_ui_configs.cc
++++ b/chrome/browser/ui/webui/chrome_web_ui_configs.cc
+@@ -34,6 +34,7 @@
+ #include "chrome/browser/ui/webui/net_export_ui.h"
+ #include "chrome/browser/ui/webui/net_internals/net_internals_ui.h"
+ #include "chrome/browser/ui/webui/ntp_tiles_internals_ui.h"
++#include "chrome/browser/ui/webui/onboarding/onboarding_page_ui.h"
+ #include "chrome/browser/ui/webui/omnibox/omnibox_ui.h"
+ #include "chrome/browser/ui/webui/policy/policy_ui.h"
+ #include "chrome/browser/ui/webui/predictors/predictors_ui.h"
+@@ -383,6 +384,7 @@ void RegisterChromeWebUIConfigs() {
+ #if !BUILDFLAG(IS_CHROMEOS) && !BUILDFLAG(IS_ANDROID)
+   map.AddWebUIConfig(std::make_unique<ManagedUserProfileNoticeUIConfig>());
+   map.AddWebUIConfig(std::make_unique<IntroUIConfig>());
++  map.AddWebUIConfig(std::make_unique<HeliumOnboardingPageConfig>());
+   map.AddWebUIConfig(std::make_unique<ProfileCustomizationUIConfig>());
+   map.AddWebUIConfig(std::make_unique<ProfilePickerUIConfig>());
+   map.AddWebUIConfig(std::make_unique<SigninErrorUIConfig>());
+--- a/chrome/browser/chrome_browser_main.cc
++++ b/chrome/browser/chrome_browser_main.cc
+@@ -1013,6 +1013,9 @@ int ChromeBrowserMainParts::PreCreateThr
+   if (first_run::IsChromeFirstRun()) {
+     if (!base::CommandLine::ForCurrentProcess()->HasSwitch(switches::kApp) &&
+         !base::CommandLine::ForCurrentProcess()->HasSwitch(switches::kAppId)) {
++      // TODO: make this run for every single profile that hasn't seen it yet,
++      // OR inherit preferences from the default profile
++      browser_creator_->AddFirstRunTabs({GURL("chrome://setup")});
+       browser_creator_->AddFirstRunTabs(master_prefs_->new_tabs);
+     }
+ 
+--- /dev/null
++++ b/chrome/browser/ui/webui/onboarding/onboarding_page_ui.cc
+@@ -0,0 +1,27 @@
++// Copyright 2025 The Helium Authors
++// Use of this source code is governed by a BSD-style license that can be
++// found in the LICENSE file.
++
++#include "chrome/browser/ui/webui/onboarding/onboarding_page_ui.h"
++
++#include "chrome/browser/profiles/profile.h"
++#include "chrome/common/webui_url_constants.h"
++#include "content/public/browser/web_ui_controller.h"
++#include "content/public/browser/web_ui_data_source.h"
++#include "components/helium_onboarding/resources/grit/helium_onboarding_generated.h"
++#include "components/helium_onboarding/resources/grit/helium_onboarding_generated_map.h"
++#include "ui/webui/webui_util.h"
++
++HeliumOnboardingPage::HeliumOnboardingPage(content::WebUI* web_ui) : WebUIController(web_ui) {
++    content::WebUIDataSource* source =
++        content::WebUIDataSource::CreateAndAdd(
++            Profile::FromWebUI(web_ui), chrome::kHeliumSetupHost
++        );
++
++    webui::SetupWebUIDataSource(
++        source, kHeliumOnboardingGenerated,
++        IDR_HELIUM_ONBOARDING_INDEX_HTML);
++
++    source->UseStringsJs();
++    source->DisableTrustedTypesCSP();
++}
+--- /dev/null
++++ b/chrome/browser/ui/webui/onboarding/onboarding_page_ui.h
+@@ -0,0 +1,30 @@
++// Copyright 2025 The Helium Authors
++// Use of this source code is governed by a BSD-style license that can be
++// found in the LICENSE file.
++
++#ifndef CHROME_BROWSER_UI_WEBUI_ONBOARDING_ONBOARDING_PAGE_H_
++#define CHROME_BROWSER_UI_WEBUI_ONBOARDING_ONBOARDING_PAGE_H_
++
++#include "chrome/common/webui_url_constants.h"
++#include "content/public/browser/webui_config.h"
++#include "content/public/browser/web_ui_controller.h"
++
++class HeliumOnboardingPage;
++
++class HeliumOnboardingPageConfig
++    : public content::DefaultWebUIConfig<HeliumOnboardingPage> {
++ public:
++  HeliumOnboardingPageConfig()
++      : DefaultWebUIConfig(content::kChromeUIScheme,
++                           chrome::kHeliumSetupHost) {}
++};
++
++class HeliumOnboardingPage : public content::WebUIController {
++public:
++    explicit HeliumOnboardingPage(content::WebUI* web_ui);
++
++    HeliumOnboardingPage(const HeliumOnboardingPage&) = delete;
++    HeliumOnboardingPage& operator=(const HeliumOnboardingPage&) = delete;
++};
++
++#endif // CHROME_BROWSER_UI_WEBUI_ONBOARDING_ONBOARDING_PAGE_H_
