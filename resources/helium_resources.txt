@@ -24,3 +24,32 @@ favicons/favicon_history_48.png components/resources/default_300_percent/favicon
 
 favicons/favicon_plugins_16.png extensions/browser/resources/default_100_percent/favicon_extensions.png
 favicons/favicon_plugins_32.png extensions/browser/resources/default_200_percent/favicon_extensions.png
+
+branding/product_logo.png components/resources/default_100_percent/chromium/product_logo.png
+branding/product_logo_white.png components/resources/default_100_percent/chromium/product_logo_white.png
+branding/product_logo_200.png components/resources/default_200_percent/chromium/product_logo.png
+branding/product_logo_white_200.png components/resources/default_200_percent/chromium/product_logo_white.png
+
+branding/product_logo_22_mono.png chrome/app/theme/chromium/product_logo_22_mono.png
+
+branding/product_icon/16x16.png chrome/app/theme/chromium/product_logo_16.png
+branding/product_icon/24x24.png chrome/app/theme/chromium/product_logo_24.png
+branding/product_icon/48x48.png chrome/app/theme/chromium/product_logo_48.png
+branding/product_icon/64x64.png chrome/app/theme/chromium/product_logo_64.png
+branding/product_icon/128x128.png chrome/app/theme/chromium/product_logo_128.png
+branding/product_icon/256x256.png chrome/app/theme/chromium/product_logo_256.png
+
+branding/product_icon/16x16.png chrome/app/theme/default_100_percent/chromium/product_logo_16.png
+branding/product_icon/32x32.png chrome/app/theme/default_100_percent/chromium/product_logo_32.png
+
+branding/product_icon/32x32.png chrome/app/theme/default_200_percent/chromium/product_logo_16.png
+branding/product_icon/64x64.png chrome/app/theme/default_200_percent/chromium/product_logo_32.png
+
+branding/product_icon/24x24.png chrome/app/theme/chromium/linux/product_logo_24.png
+branding/product_icon/48x48.png chrome/app/theme/chromium/linux/product_logo_48.png
+branding/product_icon/64x64.png chrome/app/theme/chromium/linux/product_logo_64.png
+branding/product_icon/128x128.png chrome/app/theme/chromium/linux/product_logo_128.png
+branding/product_icon/256x256.png chrome/app/theme/chromium/linux/product_logo_256.png
+
+branding/product_icon/16x16.png chrome/app/theme/default_100_percent/chromium/linux/product_logo_16.png
+branding/product_icon/32x32.png chrome/app/theme/default_100_percent/chromium/linux/product_logo_32.png
