@@ -43,8 +43,8 @@ def main():
 
     version_parts = get_version_parts(tree, platform_tree)
     if should_print:
-        print(f"{version_parts["HELIUM_MAJOR"]}.{version_parts["HELIUM_MINOR"]}." + \
-              f"{version_parts["HELIUM_PATCH"]}.{version_parts["HELIUM_PLATFORM"]}")
+        print(f"{version_parts['HELIUM_MAJOR']}.{version_parts['HELIUM_MINOR']}." + \
+              f"{version_parts['HELIUM_PATCH']}.{version_parts['HELIUM_PLATFORM']}")
     else:
         chrome_version_path = chromium_tree / "chrome/VERSION"
         check_existing_version(chrome_version_path)
