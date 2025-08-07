@@ -1,4 +1,6 @@
 name: Create new empty release
+permissions:
+  contents: write
 
 on:
   push:
