@@ -1,4 +1,7 @@
 name: New version check
+permissions:
+  contents: read
+  issues: write
 
 on:
   # enabling manual trigger
