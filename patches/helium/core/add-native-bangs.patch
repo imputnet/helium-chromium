@@ -796,7 +796,35 @@
  #endif  // COMPONENTS_HELIUM_SERVICES_PREF_NAMES_H_
 --- a/components/omnibox/browser/omnibox_edit_model.cc
 +++ b/components/omnibox/browser/omnibox_edit_model.cc
-@@ -1506,7 +1506,13 @@ void OmniboxEditModel::InternalSetUserTe
+@@ -780,6 +780,17 @@ bool OmniboxEditModel::AcceptKeyword(
+ 
+   controller_->StopAutocomplete(/*clear_result=*/false);
+ 
++  const TemplateURL* turl =
++      controller_->client()->GetTemplateURLService()->GetTemplateURLForKeyword(
++          keyword_);
++
++  if (turl && turl->bang_id() > 0 && !user_text_.starts_with(u'!')) {
++    AutocompleteMatch match = CurrentMatch(nullptr);
++    if (!match.fill_into_edit.empty()) {
++      user_text_ = match.fill_into_edit;
++    }
++  }
++
+   is_keyword_hint_ = false;
+   keyword_mode_entry_method_ = entry_method;
+   if (original_user_text_with_keyword_.empty()) {
+@@ -822,9 +833,6 @@ bool OmniboxEditModel::AcceptKeyword(
+   }
+ 
+   base::RecordAction(base::UserMetricsAction("AcceptedKeywordHint"));
+-  const TemplateURL* turl =
+-      controller_->client()->GetTemplateURLService()->GetTemplateURLForKeyword(
+-          keyword_);
+   EmitEnteredKeywordModeHistogram(entry_method, turl);
+   return true;
+ }
+@@ -1506,7 +1514,13 @@ void OmniboxEditModel::InternalSetUserTe
  
  std::u16string OmniboxEditModel::MaybeStripKeyword(
      const std::u16string& text) const {
@@ -811,7 +839,7 @@
               ? AutocompleteInput::SplitReplacementStringFromInput(text, false)
               : text;
  }
-@@ -2746,9 +2752,8 @@ bool OmniboxEditModel::MaybeAcceptKeywor
+@@ -2746,9 +2760,8 @@ bool OmniboxEditModel::MaybeAcceptKeywor
      return false;
  
    size_t keyword_length = new_text.length() - 1;
