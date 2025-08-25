@@ -35,7 +35,7 @@ jobs:
             echo "version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
             {
               printf '### Changelog\n```\n'
-              git log --oneline "$COMMIT_BEFORE..$COMMIT_AFTER"
+              git log --oneline "$OLD_VERSION.."
               echo '```'
             } | tee body.md
           fi
