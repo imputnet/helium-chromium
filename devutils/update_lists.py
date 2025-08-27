@@ -83,6 +83,7 @@ PRUNING_EXCLUDE_PATTERNS = [
     '*.mp3',
     '*.wav',
     '*.flac',
+    '*.car',
     '*.icns',
     '*.woff',
     '*.woff2',
