@@ -132,7 +132,7 @@
 +  }
 +
 +  std::string data_dir_basename = "google-chrome";
-+  *result = config_dir.Append(data_dir_basename + GetChannelSuffixForDataDir());
++  *result = config_dir.Append(data_dir_basename);
 +  return true;
 +}
 +
