@@ -404,7 +404,7 @@
 +void BangManager::LoadManifestFromString(const std::string& manifest) {
 +    auto parsed = base::JSONReader::ReadAndReturnValueWithError(
 +        manifest,
-+        base::JSON_ALLOW_COMMENTS
++        base::JSON_ALLOW_COMMENTS | base::JSON_ALLOW_TRAILING_COMMAS
 +    );
 +
 +    if (!parsed.has_value()) {
