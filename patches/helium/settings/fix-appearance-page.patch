@@ -1,6 +1,6 @@
 --- a/chrome/app/settings_strings.grdp
 +++ b/chrome/app/settings_strings.grdp
-@@ -258,6 +258,9 @@
+@@ -269,6 +269,9 @@
    <message name="IDS_SETTINGS_AUTO_PIN_NEW_TAB_GROUPS" desc="Label for the checkbox which enables or disables auto pin new tab groups.">
      Automatically pin new tab groups created on any device to the bookmarks bar
    </message>
@@ -12,7 +12,7 @@
    </message>
 --- a/chrome/browser/ui/webui/settings/settings_localized_strings_provider.cc
 +++ b/chrome/browser/ui/webui/settings/settings_localized_strings_provider.cc
-@@ -524,7 +524,7 @@ void AddAppearanceStrings(content::WebUI
+@@ -521,7 +521,7 @@ void AddAppearanceStrings(content::WebUI
        {"showBookmarksBar", IDS_SETTINGS_SHOW_BOOKMARKS_BAR},
        {"showTabGroupsInBookmarksBar",
         IDS_SETTINGS_SHOW_TAB_GROUPS_IN_BOOKMARKS_BAR},
@@ -23,14 +23,15 @@
        {"showHoverCardMemoryUsage", IDS_SETTINGS_SHOW_HOVER_CARD_MEMORY_USAGE},
 --- a/chrome/browser/resources/settings/appearance_page/appearance_page.html
 +++ b/chrome/browser/resources/settings/appearance_page/appearance_page.html
-@@ -47,40 +47,12 @@
+@@ -46,7 +46,6 @@
                hidden="[[!pageVisibility.setTheme]]"
                label="$i18n{themes}" sub-label="[[themeSublabel_]]"
                on-click="onThemeClick_" external></cr-link-row>
 -<if expr="not is_linux">
            <template is="dom-if" if="[[prefs.extensions.theme.id.value]]">
              <div class="separator"></div>
-             <cr-button id="useDefault" on-click="onUseDefaultClick_">
+             <cr-button id="useDefault" on-click="onUseDefaultClick_"
+@@ -54,33 +53,6 @@
                $i18n{resetToDefault}
              </cr-button>
            </template>

@@ -1,6 +1,6 @@
 --- a/chrome/browser/extensions/api/settings_private/prefs_util.cc
 +++ b/chrome/browser/extensions/api/settings_private/prefs_util.cc
-@@ -224,6 +224,10 @@ const PrefsUtil::TypedPrefMap& PrefsUtil
+@@ -226,6 +226,10 @@ const PrefsUtil::TypedPrefMap& PrefsUtil
    (*s_allowlist)[::prefs::kPinSplitTabButton] =
        settings_api::PrefType::kBoolean;
  
@@ -13,7 +13,7 @@
    (*s_allowlist)[::prefs::kPinnedActions] = settings_api::PrefType::kList;
 --- a/chrome/browser/ui/actions/chrome_action_id.h
 +++ b/chrome/browser/ui/actions/chrome_action_id.h
-@@ -548,6 +548,7 @@
+@@ -553,6 +553,7 @@
  #define TOOLBAR_PINNABLE_ACTION_IDS \
    E(kActionHome, IDC_HOME) \
    E(kActionForward, IDC_FORWARD) \
@@ -23,7 +23,7 @@
    E(kActionShowPasswordManager, IDC_SHOW_PASSWORD_MANAGER) \
 --- a/chrome/browser/ui/browser_ui_prefs.cc
 +++ b/chrome/browser/ui/browser_ui_prefs.cc
-@@ -109,6 +109,9 @@ void RegisterBrowserUserPrefs(user_prefs
+@@ -113,6 +113,9 @@ void RegisterBrowserUserPrefs(user_prefs
    registry->RegisterBooleanPref(prefs::kPinSplitTabButton, false,
                                  pref_registration_flags);
  
@@ -35,7 +35,7 @@
    registry->RegisterBooleanPref(prefs::kWebAppCreateInAppsMenu, true);
 --- a/chrome/browser/ui/toolbar/pinned_toolbar/pinned_toolbar_actions_model.cc
 +++ b/chrome/browser/ui/toolbar/pinned_toolbar/pinned_toolbar_actions_model.cc
-@@ -216,6 +216,7 @@ void PinnedToolbarActionsModel::UpdatePi
+@@ -215,6 +215,7 @@ void PinnedToolbarActionsModel::UpdatePi
  void PinnedToolbarActionsModel::ResetToDefault() {
    pref_service_->ClearPref(prefs::kShowHomeButton);
    pref_service_->ClearPref(prefs::kShowForwardButton);
@@ -43,7 +43,7 @@
    pref_service_->ClearPref(prefs::kPinnedActions);
  }
  
-@@ -229,7 +230,10 @@ bool PinnedToolbarActionsModel::IsDefaul
+@@ -228,7 +229,10 @@ bool PinnedToolbarActionsModel::IsDefaul
    const bool forward_is_default =
        pref_service_->GetDefaultPrefValue(prefs::kShowForwardButton)
            ->GetBool() == pref_service_->GetBoolean(prefs::kShowForwardButton);
@@ -57,7 +57,7 @@
  void PinnedToolbarActionsModel::MaybeMigrateExistingPinnedStates() {
 --- a/chrome/browser/ui/views/toolbar/toolbar_view.cc
 +++ b/chrome/browser/ui/views/toolbar/toolbar_view.cc
-@@ -468,8 +468,7 @@ void ToolbarView::Init() {
+@@ -457,8 +457,7 @@ void ToolbarView::Init() {
  #else
    // DevTools profiles are OffTheRecord, so hide it there.
    show_avatar_toolbar_button = browser_->profile()->IsIncognitoProfile() ||
@@ -67,7 +67,7 @@
  #endif
  
    const std::string sab_value = base::CommandLine::ForCurrentProcess()->
-@@ -538,6 +537,17 @@ void ToolbarView::Init() {
+@@ -527,6 +526,17 @@ void ToolbarView::Init() {
  
    home_->SetVisible(show_home_button_.GetValue());
  
@@ -85,7 +85,7 @@
    InitLayout();
  
    for (auto* button : std::array<views::Button*, 5>{back_, forward_, reload_,
-@@ -1262,6 +1272,10 @@ void ToolbarView::OnShowHomeButtonChange
+@@ -1246,6 +1256,10 @@ void ToolbarView::OnShowHomeButtonChange
    home_->SetVisible(show_home_button_.GetValue());
  }
  
@@ -98,7 +98,7 @@
      // Update the internal margins for touch layout.
 --- a/chrome/browser/ui/views/toolbar/toolbar_view.h
 +++ b/chrome/browser/ui/views/toolbar/toolbar_view.h
-@@ -287,6 +287,8 @@ class ToolbarView : public views::Access
+@@ -274,6 +274,8 @@ class ToolbarView : public views::Access
  
    void OnShowHomeButtonChanged();
  
@@ -107,7 +107,7 @@
    void OnTouchUiChanged();
  
    void UpdateClipPath();
-@@ -340,6 +342,8 @@ class ToolbarView : public views::Access
+@@ -325,6 +327,8 @@ class ToolbarView : public views::Access
    // Controls whether or not a home button should be shown on the toolbar.
    BooleanPrefMember show_home_button_;
  
@@ -177,7 +177,7 @@
    if (base::FeatureList::IsEnabled(features::kSideBySide)) {
      auto split_tab_action = side_panel::customize_chrome::mojom::Action::New(
          MojoActionForChromeAction(kActionSplitTab).value(),
-@@ -369,6 +390,9 @@ void CustomizeToolbarHandler::PinAction(
+@@ -367,6 +388,9 @@ void CustomizeToolbarHandler::PinAction(
      case kActionSplitTab:
        prefs()->SetBoolean(prefs::kPinSplitTabButton, pin);
        break;
@@ -187,7 +187,7 @@
      default:
        model_->UpdatePinnedState(chrome_action.value(), pin);
        const std::optional<std::string> metrics_name =
-@@ -422,6 +446,11 @@ void CustomizeToolbarHandler::OnPinSplit
+@@ -420,6 +444,11 @@ void CustomizeToolbarHandler::OnPinSplit
                          prefs()->GetBoolean(prefs::kPinSplitTabButton));
  }
  
@@ -211,7 +211,7 @@
    PrefService* prefs() const;
 --- a/chrome/common/pref_names.h
 +++ b/chrome/common/pref_names.h
-@@ -1324,6 +1324,10 @@ inline constexpr char kShowForwardButton
+@@ -1323,6 +1323,10 @@ inline constexpr char kShowForwardButton
  // toolbar.
  inline constexpr char kPinSplitTabButton[] = "browser.pin_split_tab_button";
  

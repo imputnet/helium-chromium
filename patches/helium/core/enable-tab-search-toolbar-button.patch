@@ -1,6 +1,6 @@
 --- a/chrome/browser/ui/toolbar/pinned_toolbar/pinned_toolbar_actions_model.cc
 +++ b/chrome/browser/ui/toolbar/pinned_toolbar/pinned_toolbar_actions_model.cc
-@@ -240,8 +240,7 @@ void PinnedToolbarActionsModel::MaybeMig
+@@ -239,8 +239,7 @@ void PinnedToolbarActionsModel::MaybeMig
      UpdatePinnedState(kActionShowChromeLabs, true);
      pref_service_->SetBoolean(prefs::kPinnedChromeLabsMigrationComplete, true);
    }
@@ -23,16 +23,16 @@
      if (tab_search_action.has_value()) {
 --- a/chrome/browser/ui/ui_features.cc
 +++ b/chrome/browser/ui/ui_features.cc
-@@ -359,7 +359,7 @@ BASE_FEATURE(kTabStripBrowserApi,
+@@ -557,7 +557,7 @@ BASE_FEATURE(kTabStripBrowserApi,
  
  BASE_FEATURE(kTabstripComboButton,
               "TabstripComboButton",
 -             base::FEATURE_DISABLED_BY_DEFAULT);
 +             base::FEATURE_ENABLED_BY_DEFAULT);
  
- BASE_FEATURE(kLaunchedTabSearchToolbarButton,
-              "LaunchedTabSearchToolbarButton",
-@@ -387,6 +387,8 @@ bool IsTabSearchMoving() {
+ // This serves as a "kill-switch" for migrating the Tab Search feature to be a
+ // toolbar button for non-ChromeOS users in the US.
+@@ -593,6 +593,8 @@ bool HasTabSearchToolbarButton() {
      return false;
    }
  
@@ -41,12 +41,3 @@
    static const bool is_tab_search_moving = [] {
      if (GetCountryCode() == "us" &&
          base::FeatureList::IsEnabled(
-@@ -412,6 +414,8 @@ bool HasTabstripComboButtonWithReverseBu
- }
- 
- bool HasTabSearchToolbarButton() {
-+  return true;
-+
-   static const bool has_tab_search_toolbar_button = [] {
-     if (!IsTabSearchMoving()) {
-       return false;

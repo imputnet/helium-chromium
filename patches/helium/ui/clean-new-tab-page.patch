@@ -10,9 +10,10 @@
    padding-top: var(--ntp-one-google-bar-height);
 --- a/chrome/browser/resources/new_tab_page/app.html
 +++ b/chrome/browser/resources/new_tab_page/app.html
-@@ -2,92 +2,13 @@
- import {nothing} from '//resources/lit/v3_0/lit.rollup.js';
- #html_wrapper_imports_end -->
+@@ -1,96 +1,11 @@
+-<!-- #html_wrapper_imports_start
+-import {nothing} from '//resources/lit/v3_0/lit.rollup.js';
+-#html_wrapper_imports_end -->
  <div id="content">
 -  ${this.lazyRender_ && this.microsoftModuleEnabled_ ? html`
 -    <iframe id="microsoftAuth" src="${this.microsoftAuthIframePath_}"></iframe>
@@ -45,7 +46,7 @@
 -        ?composebox-enabled="${this.composeboxEnabled}">
 -    </cr-searchbox>
 -    ${this.showComposebox_ ? html`
--      <ntp-composebox id="composebox" @close-composebox="${this.closeComposebox_}">
+-      <ntp-composebox id="composebox" ?is_collapsible="false" @close-composebox="${this.closeComposebox_}">
 -      </ntp-composebox>
 -    ` : ''}
 -    ${this.showLensUploadDialog_ ? html`
@@ -85,6 +86,9 @@
 -        </ntp-modules>
 -      `}
 -    ` : ''}
+-    ${this.browserPromosEnabled_ ? html`
+-      <ntp-single-promo></ntp-single-promo>
+-    ` : ''}
    ${!this.isFooterVisible_ ? html`
 -      <a id="backgroundImageAttribution"
 -          href="${this.backgroundImageAttributionUrl_}"
@@ -103,7 +107,7 @@
        <ntp-customize-buttons id="customizeButtons"
            ?modules-shown-to-user="${this.modulesShownToUser}"
            ?show-background-image="${this.showBackgroundImage_}"
-@@ -109,23 +30,3 @@ import {nothing} from '//resources/lit/v
+@@ -112,23 +27,3 @@ import {nothing} from '//resources/lit/v
    ` : ''}
    <div id="contentBottomSpacer"></div>
  </div>

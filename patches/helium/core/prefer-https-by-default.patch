@@ -1,11 +1,11 @@
 --- a/chrome/common/chrome_features.cc
 +++ b/chrome/common/chrome_features.cc
-@@ -931,7 +931,7 @@ BASE_FEATURE(kHttpsFirstBalancedMode,
+@@ -1025,7 +1025,7 @@ BASE_FEATURE(kHttpsFirstBalancedMode,
  // possible.
  BASE_FEATURE(kHttpsFirstBalancedModeAutoEnable,
               "HttpsFirstBalancedModeAutoEnable",
 -             base::FEATURE_DISABLED_BY_DEFAULT);
 +             base::FEATURE_ENABLED_BY_DEFAULT);
  
- // Enables a dialog-based UI for HTTPS-First Mode.
- BASE_FEATURE(kHttpsFirstDialogUi,
+ // Kill switch for crbug.com/1414633.
+ BASE_FEATURE(kHttpsFirstModeForAdvancedProtectionUsers,

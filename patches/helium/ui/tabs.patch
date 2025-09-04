@@ -50,7 +50,7 @@
  int TabStyle::GetTabOverlap() const {
 --- a/chrome/browser/ui/views/tabs/tab_style_views.cc
 +++ b/chrome/browser/ui/views/tabs/tab_style_views.cc
-@@ -215,8 +215,6 @@ SkPath TabStyleViewsImpl::GetPath(TabSty
+@@ -216,8 +216,6 @@ SkPath TabStyleViewsImpl::GetPath(TabSty
    CHECK(tab());
    const int stroke_thickness = GetStrokeThickness(force_active);
  
@@ -59,7 +59,7 @@
    // We'll do the entire path calculation in aligned pixels.
    // TODO(dfried): determine if we actually want to use `stroke_thickness` as
    // the inset in this case.
-@@ -230,11 +228,7 @@ SkPath TabStyleViewsImpl::GetPath(TabSty
+@@ -231,11 +229,7 @@ SkPath TabStyleViewsImpl::GetPath(TabSty
    float extension_corner_radius = tab_style()->GetBottomCornerRadius() * scale;
  
    // Selected, hover, and inactive tab fills are a detached squarcle tab.
@@ -74,7 +74,7 @@
      float bottom_left_corner_radius = content_corner_radius;
 --- a/chrome/browser/ui/views/tabs/tab.cc
 +++ b/chrome/browser/ui/views/tabs/tab.cc
-@@ -1126,9 +1126,7 @@ void Tab::UpdateIconVisibility() {
+@@ -1150,9 +1150,7 @@ void Tab::UpdateIconVisibility() {
    // left that needs to be considered.
    const int close_button_width = GetLayoutConstant(TAB_CLOSE_BUTTON_SIZE) +
                                   GetLayoutConstant(TAB_AFTER_TITLE_PADDING);
@@ -85,7 +85,7 @@
  
    if (IsActive()) {
  #if BUILDFLAG(IS_CHROMEOS)
-@@ -1174,6 +1172,10 @@ void Tab::UpdateIconVisibility() {
+@@ -1198,6 +1196,10 @@ void Tab::UpdateIconVisibility() {
          large_enough_for_close_button;
      if (base::CommandLine::ForCurrentProcess()->HasSwitch("hide-tab-close-buttons"))
        showing_close_button_ = false;

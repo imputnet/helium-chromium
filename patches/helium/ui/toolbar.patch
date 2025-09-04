@@ -33,15 +33,15 @@
      path.addRoundRect(gfx::RectToSkRect(rect), radii, radii);
 --- a/chrome/browser/ui/views/toolbar/toolbar_view.cc
 +++ b/chrome/browser/ui/views/toolbar/toolbar_view.cc
-@@ -1038,7 +1038,7 @@ void ToolbarView::LayoutCommon() {
-     views::ManualLayoutUtil(layout_manager_)
-         .SetViewHidden(toolbar_divider_, !extensions_container_->GetVisible());
-     const SkColor toolbar_extension_separator_color =
--        GetColorProvider()->GetColor(kColorToolbarExtensionSeparatorEnabled);
-+        GetColorProvider()->GetColor(kColorTabDividerFrameActive);
+@@ -383,7 +383,7 @@ void ToolbarView::Init() {
+         gfx::Size(GetLayoutConstant(TOOLBAR_DIVIDER_WIDTH),
+                   GetLayoutConstant(TOOLBAR_DIVIDER_HEIGHT)));
      toolbar_divider_->SetBackground(views::CreateRoundedRectBackground(
-         toolbar_extension_separator_color,
+-        kColorToolbarExtensionSeparatorEnabled,
++        kColorTabDividerFrameActive,
          GetLayoutConstant(TOOLBAR_DIVIDER_CORNER_RADIUS)));
+   }
+ 
 --- a/chrome/browser/ui/views/toolbar/pinned_toolbar_actions_container.cc
 +++ b/chrome/browser/ui/views/toolbar/pinned_toolbar_actions_container.cc
 @@ -269,7 +269,7 @@ void PinnedToolbarActionsContainer::Upda

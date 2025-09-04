@@ -1,23 +1,6 @@
 --- a/chrome/browser/ui/views/frame/browser_view.cc
 +++ b/chrome/browser/ui/views/frame/browser_view.cc
-@@ -547,15 +547,7 @@ class ContentsSeparator : public views::
-   METADATA_HEADER(ContentsSeparator, views::View)
- 
-  public:
--  ContentsSeparator() {
--    SetBackground(
--        views::CreateSolidBackground(kColorToolbarContentAreaSeparator));
--
--    // BrowserViewLayout will respect either the height or width of this,
--    // depending on orientation, not simultaneously both.
--    SetPreferredSize(
--        gfx::Size(views::Separator::kThickness, views::Separator::kThickness));
--  }
-+  ContentsSeparator() {}
- };
- 
- BEGIN_METADATA(ContentsSeparator)
-@@ -806,6 +798,7 @@ class BrowserViewLayoutDelegateImpl : pu
+@@ -780,6 +780,7 @@ class BrowserViewLayoutDelegateImpl : pu
    }
  
    bool IsContentsSeparatorEnabled() const override {
@@ -44,3 +27,27 @@
 +        BrowserFrameActiveState::kUseCurrent));
    }
  }
+--- a/chrome/browser/ui/views/frame/contents_separator.cc
++++ b/chrome/browser/ui/views/frame/contents_separator.cc
+@@ -4,20 +4,9 @@
+ 
+ #include "chrome/browser/ui/views/frame/contents_separator.h"
+ 
+-#include "chrome/browser/ui/color/chrome_color_id.h"
+ #include "ui/base/metadata/metadata_impl_macros.h"
+-#include "ui/views/background.h"
+-#include "ui/views/controls/separator.h"
+ 
+-ContentsSeparator::ContentsSeparator() {
+-  SetBackground(
+-      views::CreateSolidBackground(kColorToolbarContentAreaSeparator));
+-
+-  // BrowserViewLayout will respect either the height or width of this,
+-  // depending on orientation, not simultaneously both.
+-  SetPreferredSize(
+-      gfx::Size(views::Separator::kThickness, views::Separator::kThickness));
+-}
++ContentsSeparator::ContentsSeparator() {}
+ 
+ BEGIN_METADATA(ContentsSeparator)
+ END_METADATA

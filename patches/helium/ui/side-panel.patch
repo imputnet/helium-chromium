@@ -1,6 +1,6 @@
 --- a/chrome/browser/ui/views/side_panel/side_panel.cc
 +++ b/chrome/browser/ui/views/side_panel/side_panel.cc
-@@ -55,13 +55,12 @@ namespace {
+@@ -56,13 +56,12 @@ namespace {
  // This thickness includes the solid-color background and the inner round-rect
  // border-color stroke. It does not include the outer-color separator.
  int GetBorderThickness() {

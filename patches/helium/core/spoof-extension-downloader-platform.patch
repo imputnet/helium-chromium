@@ -4,8 +4,8 @@
  // browser process.
  class UpdateQueryParams {
   public:
--  enum ProdId { CHROME = 0, CRX, WEBVIEW };
-+  enum ProdId { CHROME = 0, CRX, WEBVIEW, CRX_DUMMY };
+-  enum ProdId { CHROME = 0, CRX, WEBVIEW, IOS_WEBVIEW };
++  enum ProdId { CHROME = 0, CRX, WEBVIEW, IOS_WEBVIEW, CRX_DUMMY };
  
    UpdateQueryParams() = delete;
    UpdateQueryParams(const UpdateQueryParams&) = delete;
@@ -20,7 +20,7 @@
  const char kChrome[] = "chrome";
  const char kCrx[] = "chromecrx";
  const char kWebView[] = "googleandroidwebview";
-@@ -84,6 +84,10 @@ UpdateQueryParamsDelegate* g_delegate =
+@@ -86,6 +86,10 @@ UpdateQueryParamsDelegate* g_delegate =
  
  // static
  std::string UpdateQueryParams::Get(ProdId prod) {
@@ -29,9 +29,9 @@
 +  }
 +
    return base::StringPrintf(
-       "os=%s&arch=%s&os_arch=%s&nacl_arch=%s&prod=%s%s&acceptformat=crx3,puff",
-       kOs, kArch, base::SysInfo().OperatingSystemArchitecture().c_str(),
-@@ -97,6 +101,7 @@ const char* UpdateQueryParams::GetProdId
+       "os=%s&arch=%s&os_arch=%s&prod=%s%s&acceptformat=crx3,puff", kOs, kArch,
+       base::SysInfo().OperatingSystemArchitecture().c_str(),
+@@ -99,6 +103,7 @@ const char* UpdateQueryParams::GetProdId
      case UpdateQueryParams::CHROME:
        return kChrome;
      case UpdateQueryParams::CRX:

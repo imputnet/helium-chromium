@@ -76,7 +76,7 @@
  
 --- a/chrome/browser/ui/views/location_bar/location_bar_view.cc
 +++ b/chrome/browser/ui/views/location_bar/location_bar_view.cc
-@@ -220,7 +220,10 @@ LocationBarView::LocationBarView(Browser
+@@ -226,7 +226,10 @@ LocationBarView::LocationBarView(Browser
                   !v->GetOmniboxPopupView()->IsOpen();
          }));
      views::FocusRing::Get(this)->SetOutsetFocusRingDisabled(true);
@@ -88,7 +88,7 @@
  
  #if BUILDFLAG(OS_LEVEL_GEOLOCATION_PERMISSION_SUPPORTED)
      if (features::IsOsLevelGeolocationPermissionSupportEnabled()) {
-@@ -270,9 +273,9 @@ void LocationBarView::Init() {
+@@ -276,9 +279,9 @@ void LocationBarView::Init() {
        CONTEXT_OMNIBOX_PRIMARY, views::style::STYLE_PRIMARY);
  
    const gfx::FontList& omnibox_chip_font_list = typography_provider.GetFont(
@@ -100,7 +100,7 @@
  
    auto location_icon_view =
        std::make_unique<LocationIconView>(omnibox_chip_font_list, this, this);
-@@ -391,21 +394,11 @@ void LocationBarView::Init() {
+@@ -397,21 +400,11 @@ void LocationBarView::Init() {
      // first so that they appear on the left side of the icon container.
      // TODO(crbug.com/40835681): Improve the ordering heuristics for page action
      // icons and determine a way to handle simultaneous icon animations.
@@ -122,7 +122,7 @@
      if (!apps::features::ShouldShowLinkCapturingUX()) {
        params.types_enabled.push_back(PageActionIconType::kIntentPicker);
      }
-@@ -415,40 +408,8 @@ void LocationBarView::Init() {
+@@ -421,54 +414,8 @@ void LocationBarView::Init() {
      params.types_enabled.push_back(PageActionIconType::kZoom);
      params.types_enabled.push_back(PageActionIconType::kFileSystemAccess);
  
@@ -137,10 +137,24 @@
 -  params.types_enabled.push_back(PageActionIconType::kVirtualCardEnroll);
 -  params.types_enabled.push_back(PageActionIconType::kMandatoryReauth);
 -
+-  if (browser_ &&
+-      base::FeatureList::IsEnabled(omnibox::kAiModeOmniboxEntryPoint)) {
+-    // Position in the leading position, like the entrypoint for
+-    // kLensOverlayHomework below. While both chips may be enabled, they will
+-    // not appear at the same time due to different focus behavior. The
+-    // visibility of this entrypoint is dependent on whether or not the user
+-    // meets AIM eligibility criteria.
+-    params.types_enabled.insert(params.types_enabled.begin(),
+-                                PageActionIconType::kAiMode);
+-  }
+-
 -  if (browser_ && lens::features::IsOmniboxEntryPointEnabled()) {
 -    // The persistent compact entrypoint should be positioned directly before
 -    // the star icon and the prominent expanding entrypoint should be
--    // positioned in the leading position.
+-    // positioned in the leading position. This entrypoint will be suppressed
+-    // if the AIM page action is enabled and the user meets AIM eligibility
+-    // criteria, since we want to avoid both showing up when the user focuses
+-    // the Omnibox.
 -    if (lens::features::IsOmniboxEntrypointAlwaysVisible()) {
 -      params.types_enabled.push_back(PageActionIconType::kLensOverlay);
 -    } else {
@@ -163,7 +177,7 @@
  
    if (browser_ && !is_popup_mode_) {
      params.types_enabled.push_back(PageActionIconType::kBookmarkStar);
-@@ -489,7 +450,7 @@ bool LocationBarView::IsInitialized() co
+@@ -509,7 +456,7 @@ bool LocationBarView::IsInitialized() co
  
  int LocationBarView::GetBorderRadius() const {
    return ChromeLayoutProvider::Get()->GetCornerRadiusMetric(
@@ -172,7 +186,7 @@
  }
  
  std::unique_ptr<views::Background> LocationBarView::CreateRoundRectBackground(
-@@ -689,9 +650,9 @@ void LocationBarView::Layout(PassKey) {
+@@ -709,9 +656,9 @@ void LocationBarView::Layout(PassKey) {
    // TODO(manukh): Move constants to layout_constants.cc.
    // The padding between the left edges of the location bar and the LHS icon,
    // e.g. the page info icon, the google G icon, the selected suggestion icon.
@@ -184,7 +198,7 @@
  
    // Apply indentation to align the omnibox input icon and the text with those
    // of the suggestions in the popup. However, there are two exceptions where
-@@ -710,22 +671,22 @@ void LocationBarView::Layout(PassKey) {
+@@ -730,22 +677,22 @@ void LocationBarView::Layout(PassKey) {
                               !location_icon_view_->ShouldShowLabel() &&
                               !ShouldShowKeywordBubble();
    if (should_indent) {
@@ -211,7 +225,7 @@
    }
  
    LocationBarLayout leading_decorations(LocationBarLayout::Position::kLeftEdge,
-@@ -1182,7 +1143,7 @@ int LocationBarView::GetMinimumTrailingW
+@@ -1206,7 +1153,7 @@ int LocationBarView::GetMinimumTrailingW
  }
  
  gfx::Rect LocationBarView::GetLocalBoundsWithoutEndcaps() const {
@@ -220,7 +234,7 @@
    gfx::Rect bounds_without_endcaps(GetLocalBounds());
    bounds_without_endcaps.Inset(gfx::Insets::VH(0, border_radius));
    return bounds_without_endcaps;
-@@ -1196,9 +1157,9 @@ void LocationBarView::RefreshBackground(
+@@ -1220,9 +1167,9 @@ void LocationBarView::RefreshBackground(
    const bool high_contrast = GetNativeTheme()->UserHasContrastPreference();
  
    const auto* const color_provider = GetColorProvider();

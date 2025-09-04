@@ -133,7 +133,7 @@
 +#endif  // EXTENSIONS_COMMON_MANIFEST_URL_PATCHER_H_
 --- a/extensions/common/BUILD.gn
 +++ b/extensions/common/BUILD.gn
-@@ -449,6 +449,8 @@ static_library("common") {
+@@ -451,6 +451,8 @@ static_library("common") {
      "manifest_handlers/webview_info.h",
      "manifest_url_handlers.cc",
      "manifest_url_handlers.h",
@@ -166,7 +166,7 @@
  
 --- a/chrome/browser/extensions/api/settings_private/prefs_util.cc
 +++ b/chrome/browser/extensions/api/settings_private/prefs_util.cc
-@@ -348,6 +348,8 @@ const PrefsUtil::TypedPrefMap& PrefsUtil
+@@ -350,6 +350,8 @@ const PrefsUtil::TypedPrefMap& PrefsUtil
    // Helium services page
    (*s_allowlist)[::prefs::kHeliumServicesEnabled] =
        settings_api::PrefType::kBoolean;
@@ -177,7 +177,7 @@
  
 --- a/chrome/browser/ui/browser_ui_prefs.cc
 +++ b/chrome/browser/ui/browser_ui_prefs.cc
-@@ -191,6 +191,7 @@ void RegisterBrowserUserPrefs(user_prefs
+@@ -196,6 +196,7 @@ void RegisterBrowserUserPrefs(user_prefs
  
    {
      registry->RegisterBooleanPref(prefs::kHeliumServicesEnabled, true);
@@ -201,7 +201,7 @@
  </div>
 --- a/chrome/browser/ui/webui/settings/settings_localized_strings_provider.cc
 +++ b/chrome/browser/ui/webui/settings/settings_localized_strings_provider.cc
-@@ -1898,6 +1898,10 @@ void AddPrivacyStrings(content::WebUIDat
+@@ -1951,6 +1951,10 @@ void AddPrivacyStrings(content::WebUIDat
        {"heliumServicesToggle", IDS_SETTINGS_HELIUM_SERVICES_TOGGLE},
        {"heliumServicesToggleDescription",
          IDS_SETTINGS_HELIUM_SERVICES_TOGGLE_DESCRIPTION},
@@ -214,7 +214,7 @@
          IDS_SETTINGS_HELIUM_SERVICES_OVERRIDE_DESCRIPTION},
 --- a/chrome/app/settings_strings.grdp
 +++ b/chrome/app/settings_strings.grdp
-@@ -1884,6 +1884,12 @@
+@@ -1933,6 +1933,12 @@
    <message name="IDS_SETTINGS_HELIUM_SERVICES_TOGGLE_DESCRIPTION" desc="Description of the toggle for enabling/disabling of all Helium services">
      When enabled, Helium will be able to connect to anonymous web services to provide additional functionality. When disabled, additional features will not work.
    </message>
@@ -276,7 +276,7 @@
                              PrefChangeRegistrar& registrar, const base::RepeatingClosure& observer);
 --- a/chrome/browser/extensions/BUILD.gn
 +++ b/chrome/browser/extensions/BUILD.gn
-@@ -531,6 +531,7 @@ source_set("extensions") {
+@@ -556,6 +556,7 @@ source_set("extensions") {
      "//components/enterprise",
      "//components/guest_view/buildflags",
      "//components/guest_view/common",
@@ -507,7 +507,7 @@
    raw_ptr<DelayedInstallManager> delayed_install_manager_ = nullptr;
 --- a/extensions/browser/pending_extension_info.h
 +++ b/extensions/browser/pending_extension_info.h
-@@ -57,6 +57,8 @@ class PendingExtensionInfo {
+@@ -60,6 +60,8 @@ class PendingExtensionInfo {
    const base::Version& version() const { return version_; }
    const std::string& install_parameter() const { return install_parameter_; }
  

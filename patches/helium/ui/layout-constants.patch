@@ -41,7 +41,7 @@
      case LOCATION_BAR_ICON_SIZE:
        return touch_ui ? 20 : 16;
      case LOCATION_BAR_LEADING_ICON_SIZE:
-@@ -97,12 +97,12 @@ int GetLayoutConstant(LayoutConstant con
+@@ -93,12 +93,12 @@ int GetLayoutConstant(LayoutConstant con
      case TAB_CLOSE_BUTTON_SIZE:
        return touch_ui ? 24 : 16;
      case TAB_HEIGHT:
@@ -56,7 +56,7 @@
      case TAB_SEPARATOR_HEIGHT:
        return touch_ui ? 24 : 20;
      case TAB_PRE_TITLE_PADDING:
-@@ -110,28 +110,23 @@ int GetLayoutConstant(LayoutConstant con
+@@ -106,28 +106,23 @@ int GetLayoutConstant(LayoutConstant con
      case TAB_STACK_DISTANCE:
        return touch_ui ? 4 : 6;
      case TABSTRIP_TOOLBAR_OVERLAP:
@@ -92,7 +92,7 @@
      case PAGE_INFO_ICON_SIZE:
        return 20;
      case DOWNLOAD_ICON_SIZE:
-@@ -169,7 +164,7 @@ gfx::Insets GetLayoutInsets(LayoutInset
+@@ -165,7 +160,7 @@ gfx::Insets GetLayoutInsets(LayoutInset
      }
  
      case TOOLBAR_BUTTON:
@@ -101,7 +101,7 @@
  
      case BROWSER_APP_MENU_CHIP_PADDING:
        if (touch_ui) {
-@@ -182,11 +177,11 @@ gfx::Insets GetLayoutInsets(LayoutInset
+@@ -181,11 +176,11 @@ gfx::Insets GetLayoutInsets(LayoutInset
        if (touch_ui) {
          return GetLayoutInsets(TOOLBAR_BUTTON);
        } else {
@@ -110,7 +110,7 @@
        }
  
      case TOOLBAR_INTERIOR_MARGIN:
--      return touch_ui ? gfx::Insets() : gfx::Insets::VH(6, 5);
+-      return touch_ui ? gfx::Insets::VH(4, 0) : gfx::Insets::VH(6, 5);
 +      return touch_ui ? gfx::Insets() : gfx::Insets::TLBR(0, 6, 3, 6);
  
      case WEBUI_TAB_STRIP_TOOLBAR_INTERIOR_MARGIN:

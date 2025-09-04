@@ -23,7 +23,7 @@
  #endif  // COMPONENTS_HELIUM_SERVICES_PREF_NAMES_H_
 --- a/chrome/browser/ui/browser_ui_prefs.cc
 +++ b/chrome/browser/ui/browser_ui_prefs.cc
-@@ -192,6 +192,8 @@ void RegisterBrowserUserPrefs(user_prefs
+@@ -197,6 +197,8 @@ void RegisterBrowserUserPrefs(user_prefs
    {
      registry->RegisterBooleanPref(prefs::kHeliumServicesEnabled, true);
      registry->RegisterStringPref(prefs::kHeliumServicesOrigin, "");
@@ -34,15 +34,15 @@
    registry->RegisterBooleanPref(
 --- a/chrome/browser/ui/startup/startup_browser_creator_impl.cc
 +++ b/chrome/browser/ui/startup/startup_browser_creator_impl.cc
-@@ -51,6 +51,7 @@
- #include "chrome/common/chrome_switches.h"
+@@ -57,6 +57,7 @@
+ #include "chrome/common/chrome_version.h"
  #include "chrome/common/pref_names.h"
  #include "chrome/common/webui_url_constants.h"
 +#include "components/helium_services/pref_names.h"
  #include "components/custom_handlers/protocol_handler_registry.h"
  #include "components/prefs/pref_service.h"
  #include "components/privacy_sandbox/privacy_sandbox_features.h"
-@@ -463,6 +464,15 @@ StartupBrowserCreatorImpl::DetermineStar
+@@ -480,6 +481,15 @@ StartupBrowserCreatorImpl::DetermineStar
    LaunchResult launch_result =
        tabs.empty() ? LaunchResult::kNormally : LaunchResult::kWithGivenUrls;
  
@@ -60,7 +60,7 @@
      whats_new::LogStartupType(whats_new::StartupType::kIneligible);
 --- a/tools/gritsettings/resource_ids.spec
 +++ b/tools/gritsettings/resource_ids.spec
-@@ -1162,6 +1162,10 @@
+@@ -1186,6 +1186,10 @@
     "META": {"sizes": {"includes": [30],}},
      "includes": [7480],
    },
@@ -73,17 +73,17 @@
    # START ios/ section.
 --- a/chrome/browser/BUILD.gn
 +++ b/chrome/browser/BUILD.gn
-@@ -8679,6 +8679,7 @@ static_library("browser_generated_files"
+@@ -8641,6 +8641,7 @@ static_library("browser_generated_files"
      "//chrome/browser/v8_compile_hints/proto",
      "//chrome/browser/web_applications/mojom:mojom_web_apps_enum",
      "//chrome/common/request_header_integrity:buildflags",
 +    "//components/helium_onboarding:generated_resources",
+     "//components/autofill/core/browser/ml_model/logging:mojo_bindings",
      "//components/data_sharing/data_sharing_internals/webui:mojo_bindings",
      "//components/webui/chrome_urls/mojom:mojo_bindings",
-   ]
 --- a/chrome/chrome_paks.gni
 +++ b/chrome/chrome_paks.gni
-@@ -453,11 +453,13 @@ template("chrome_extra_paks") {
+@@ -463,11 +463,13 @@ template("chrome_extra_paks") {
      if (!is_android && !is_chromeos) {
        sources += [
          "$root_gen_dir/chrome/intro_resources.pak",
@@ -109,7 +109,7 @@
  #if !BUILDFLAG(IS_ANDROID)
 --- a/chrome/common/webui_url_constants.h
 +++ b/chrome/common/webui_url_constants.h
-@@ -588,6 +588,8 @@ inline constexpr char kChromeUIProfilePi
+@@ -598,6 +598,8 @@ inline constexpr char kChromeUIProfilePi
  inline constexpr char kChromeUIProfilePickerStartupQuery[] = "startup";
  inline constexpr char kChromeUIProfilePickerGlicQuery[] = "glic";
  inline constexpr char kChromeUIProfilePickerUrl[] = "chrome://profile-picker/";
@@ -120,7 +120,7 @@
      "chrome://history-sync-optin/";
 --- a/chrome/browser/ui/BUILD.gn
 +++ b/chrome/browser/ui/BUILD.gn
-@@ -200,6 +200,10 @@ static_library("ui") {
+@@ -175,6 +175,10 @@ static_library("ui") {
      "webui/net_internals/net_internals_ui.h",
      "webui/ntp_tiles_internals_ui.cc",
      "webui/ntp_tiles_internals_ui.h",
@@ -133,7 +133,7 @@
      "webui/omnibox/omnibox_ui.cc",
 --- a/chrome/browser/ui/webui/chrome_web_ui_configs.cc
 +++ b/chrome/browser/ui/webui/chrome_web_ui_configs.cc
-@@ -37,6 +37,7 @@
+@@ -38,6 +38,7 @@
  #include "chrome/browser/ui/webui/net_export_ui.h"
  #include "chrome/browser/ui/webui/net_internals/net_internals_ui.h"
  #include "chrome/browser/ui/webui/ntp_tiles_internals_ui.h"
@@ -141,7 +141,7 @@
  #include "chrome/browser/ui/webui/omnibox/omnibox_ui.h"
  #include "chrome/browser/ui/webui/policy/policy_ui.h"
  #include "chrome/browser/ui/webui/predictors/predictors_ui.h"
-@@ -407,6 +408,7 @@ void RegisterChromeWebUIConfigs() {
+@@ -413,6 +414,7 @@ void RegisterChromeWebUIConfigs() {
  #if !BUILDFLAG(IS_CHROMEOS) && !BUILDFLAG(IS_ANDROID)
    map.AddWebUIConfig(std::make_unique<ManagedUserProfileNoticeUIConfig>());
    map.AddWebUIConfig(std::make_unique<IntroUIConfig>());

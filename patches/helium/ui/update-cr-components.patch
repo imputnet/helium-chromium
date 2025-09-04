@@ -153,7 +153,7 @@
    margin: var(--cr-toolbar-icon-margin, 0);
  }
  
-@@ -174,7 +174,7 @@ input[type='search']::-webkit-search-can
+@@ -173,7 +173,7 @@ input[type='search']::-webkit-search-can
    padding: 0 6px;
    position: relative;
    width: var(--cr-toolbar-field-width, 680px);
@@ -162,7 +162,7 @@
  }
  
  @media (prefers-color-scheme: dark) {
-@@ -203,7 +203,6 @@ input[type='search']::-webkit-search-can
+@@ -202,7 +202,6 @@ input[type='search']::-webkit-search-can
  
  :host([search-focused_]:not([narrow])) {
    outline: 2px solid var(--cr-focus-outline-color);
@@ -170,7 +170,7 @@
  }
  
  :host(:not([narrow])) #stateBackground {
-@@ -257,4 +256,5 @@ input[type='search']::-webkit-search-can
+@@ -256,4 +255,5 @@ input[type='search']::-webkit-search-can
    height: 100%;
    position: relative;
    z-index: 2;
@@ -252,7 +252,7 @@
    position: relative;
 --- a/ui/webui/resources/cr_elements/cr_toast/cr_toast.css
 +++ b/ui/webui/resources/cr_elements/cr_toast/cr_toast.css
-@@ -26,9 +26,9 @@
+@@ -27,9 +27,9 @@
    box-sizing: border-box;
    display: flex;
    line-height: 20px;
