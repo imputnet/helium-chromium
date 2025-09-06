@@ -1,6 +1,6 @@
 --- a/chrome/browser/ui/views/toolbar/app_menu.cc
 +++ b/chrome/browser/ui/views/toolbar/app_menu.cc
-@@ -249,7 +249,7 @@ class InMenuButtonBackground : public vi
+@@ -250,7 +250,7 @@ class InMenuButtonBackground : public vi
        constexpr int kCircularButtonSize = 28;
        bounds_rect.ClampToCenteredSize(
            gfx::Size(kCircularButtonSize, kCircularButtonSize));
@@ -9,7 +9,7 @@
      }
      const auto* const color_provider = view->GetColorProvider();
      cc::PaintFlags flags;
-@@ -1430,21 +1430,8 @@ void AppMenu::PopulateMenu(MenuItemView*
+@@ -1431,21 +1431,8 @@ void AppMenu::PopulateMenu(MenuItemView*
        PopulateMenu(item, model->GetSubmenuModelAt(i));
      }
  
@@ -31,7 +31,7 @@
          ProfileAttributesEntry* profile_attributes =
              GetProfileAttributesFromProfile(browser_->profile());
          if (profile_attributes &&
-@@ -1458,7 +1445,6 @@ void AppMenu::PopulateMenu(MenuItemView*
+@@ -1459,7 +1446,6 @@ void AppMenu::PopulateMenu(MenuItemView*
          break;
        }
        case IDC_UPGRADE_DIALOG: {
@@ -39,10 +39,13 @@
          if (const auto upgrade_substring_text = GetUpgradeDialogSubstringText();
              !upgrade_substring_text.empty()) {
            item->AddChildView(
-@@ -1477,17 +1463,6 @@ void AppMenu::PopulateMenu(MenuItemView*
-         }
+@@ -1479,18 +1465,6 @@ void AppMenu::PopulateMenu(MenuItemView*
          break;
        }
+       case IDC_WEB_APP_UPGRADE_DIALOG: {
+-        add_menu_row_background(12, ui::kColorAppMenuUpgradeRowBackground);
+-        break;
+-      }
 -      case IDC_SET_BROWSER_AS_DEFAULT: {
 -        // Only highlight the default browser item when it is first in the
 -        // AppMenu.
@@ -52,8 +55,6 @@
 -                  views::DISTANCE_CONTROL_VERTICAL_TEXT_PADDING),
 -              ui::kColorAppMenuUpgradeRowBackground);
 -        }
--        break;
--      }
+         break;
+       }
        case IDC_EDIT_MENU: {
-         ui::ButtonMenuItemModel* submodel = model->GetButtonMenuItemAt(i);
-         DCHECK_EQ(IDC_CUT, submodel->GetCommandIdAt(0));

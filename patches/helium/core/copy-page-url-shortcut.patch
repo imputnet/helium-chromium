@@ -44,7 +44,7 @@
  };
 --- a/chrome/browser/ui/cocoa/main_menu_builder.mm
 +++ b/chrome/browser/ui/cocoa/main_menu_builder.mm
-@@ -177,6 +177,8 @@ NSMenuItem* BuildEditMenu(NSApplication*
+@@ -189,6 +189,8 @@ NSMenuItem* BuildEditMenu(NSApplication*
                Item(IDS_COPY_MAC)
                    .tag(IDC_CONTENT_CONTEXT_COPY)
                    .action(@selector(copy:)),

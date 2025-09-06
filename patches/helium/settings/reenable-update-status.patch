@@ -5,7 +5,7 @@
          <!-- Set the icon from the iconset (when it's obsolete/EOL and
            when update is done) or set the src (when it's updating). -->
 -<if expr="False">
-+<if expr="not chromeos_ash">
++<if expr="not is_chromeos">
          <div class="icon-container"
              hidden="[[!shouldShowIcons_(showUpdateStatus_)]]">
            <cr-icon
@@ -14,7 +14,7 @@
  </if>
          <div class="flex cr-padded-text">
 -<if expr="False">
-+<if expr="not chromeos_ash">
++<if expr="not is_chromeos">
            <div id="updateStatusMessage" hidden="[[!showUpdateStatus_]]">
              <div role="alert" aria-live="polite"
                  inner-h-t-m-l="[[getUpdateStatusMessage_(

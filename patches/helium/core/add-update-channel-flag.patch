@@ -1,6 +1,6 @@
 --- a/chrome/browser/about_flags.cc
 +++ b/chrome/browser/about_flags.cc
-@@ -41,6 +41,7 @@
+@@ -40,6 +40,7 @@
  #include "chrome/browser/apps/app_discovery_service/app_discovery_service.h"
  #include "chrome/browser/browser_features.h"
  #include "chrome/browser/browser_process.h"
@@ -90,7 +90,7 @@
       "Configures the frame rate the browser is throttled to when Energy Saver is enabled. Helium flag.",
 --- a/chrome/browser/BUILD.gn
 +++ b/chrome/browser/BUILD.gn
-@@ -307,6 +307,8 @@ static_library("browser") {
+@@ -304,6 +304,8 @@ static_library("browser") {
      "btm/btm_browser_signin_detector_factory.h",
      "btm/stateful_bounce_counter.cc",
      "btm/stateful_bounce_counter.h",

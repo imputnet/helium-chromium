@@ -1,6 +1,6 @@
 --- a/chrome/browser/resources/settings/privacy_page/privacy_page.ts
 +++ b/chrome/browser/resources/settings/privacy_page/privacy_page.ts
-@@ -291,7 +291,7 @@ export class SettingsPrivacyPageElement
+@@ -290,7 +290,7 @@ export class SettingsPrivacyPageElement
        shouldShowSafetyHub_: {
          type: Boolean,
          value() {

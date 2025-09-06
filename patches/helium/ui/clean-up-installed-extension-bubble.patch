@@ -1,6 +1,6 @@
 --- a/chrome/browser/ui/views/extensions/extension_installed_bubble_view.cc
 +++ b/chrome/browser/ui/views/extensions/extension_installed_bubble_view.cc
-@@ -216,21 +216,6 @@ void ExtensionInstalledBubbleView::Init(
+@@ -215,21 +215,6 @@ void ExtensionInstalledBubbleView::Init(
        views::BoxLayout::CrossAxisAlignment::kStart);
    SetLayoutManager(std::move(layout));
  

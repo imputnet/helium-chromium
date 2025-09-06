@@ -40,7 +40,7 @@
  #include "third_party/omnibox_proto/types.pb.h"
  
  class ClipboardProvider;
-@@ -542,6 +543,8 @@ class AutocompleteController : public Au
+@@ -551,6 +552,8 @@ class AutocompleteController : public Au
    // A list of all providers.
    Providers providers_;
  
@@ -51,7 +51,7 @@
    raw_ptr<HistoryQuickProvider> history_quick_provider_;
 --- a/components/omnibox/browser/autocomplete_controller.cc
 +++ b/components/omnibox/browser/autocomplete_controller.cc
-@@ -91,6 +91,7 @@
+@@ -92,6 +92,7 @@
  #include "components/optimization_guide/machine_learning_tflite_buildflags.h"
  #include "components/search_engines/search_engine_type.h"
  #include "components/search_engines/template_url.h"
@@ -59,7 +59,7 @@
  #include "components/search_engines/template_url_service.h"
  #include "components/search_engines/template_url_starter_pack_data.h"
  #include "components/strings/grit/components_strings.h"
-@@ -1885,7 +1886,21 @@ void AutocompleteController::UpdateKeywo
+@@ -1914,7 +1915,21 @@ void AutocompleteController::UpdateKeywo
            // - For contextual search matches, the description indicates the
            //   alternative UX because they're opened in the side panel.
            i->description = template_url->AdjustedShortNameForLocaleDirection();
@@ -177,15 +177,15 @@
               history_embeddings::GetFeatureParameters().omnibox_scoped &&
 --- a/chrome/browser/ui/views/omnibox/omnibox_suggestion_button_row_view.cc
 +++ b/chrome/browser/ui/views/omnibox/omnibox_suggestion_button_row_view.cc
-@@ -23,6 +23,7 @@
- #include "components/omnibox/browser/omnibox_edit_model.h"
+@@ -24,6 +24,7 @@
  #include "components/omnibox/browser/omnibox_field_trial.h"
  #include "components/omnibox/browser/vector_icons.h"
+ #include "components/omnibox/common/omnibox_feature_configs.h"
 +#include "components/search_engines/template_url_bang_manager.h"
  #include "components/strings/grit/components_strings.h"
  #include "components/vector_icons/vector_icons.h"
  #include "third_party/metrics_proto/omnibox_event.pb.h"
-@@ -361,6 +362,27 @@ void OmniboxSuggestionButtonRowView::Upd
+@@ -527,6 +528,27 @@ void OmniboxSuggestionButtonRowView::Upd
        const auto names = SelectedKeywordView::GetKeywordLabelNames(
            keyword,
            popup_view_->controller()->client()->GetTemplateURLService());

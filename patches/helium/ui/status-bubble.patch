@@ -30,7 +30,7 @@
                           kShadowThickness + kTextHorizPadding);
  }
  
-@@ -450,47 +453,13 @@ void StatusView::OnPaint(gfx::Canvas* ca
+@@ -450,45 +453,13 @@ void StatusView::OnPaint(gfx::Canvas* ca
    float scale = canvas->UndoDeviceScaleFactor();
    const float radius = kBubbleCornerRadius * scale;
  
@@ -69,13 +69,11 @@
 -#if BUILDFLAG(IS_MAC)
 -    // Mac's window has rounded corners, but the corner radius might be
 -    // different on different versions. Status bubble will use its own round
--    // corner on Mac when there is no download shelf beneath.
--    if (!status_bubble_->download_shelf_is_visible_) {
--      if (base::i18n::IsRTL() != (style_ == BubbleStyle::kStandard)) {
--        round_corner(gfx::RRectF::Corner::kLowerLeft);
--      } else {
--        round_corner(gfx::RRectF::Corner::kLowerRight);
--      }
+-    // corner on Mac.
+-    if (base::i18n::IsRTL() != (style_ == BubbleStyle::kStandard)) {
+-      round_corner(gfx::RRectF::Corner::kLowerLeft);
+-    } else {
+-      round_corner(gfx::RRectF::Corner::kLowerRight);
 -    }
 -#endif
 -  }
@@ -83,7 +81,7 @@
    // Snap to pixels to avoid shadow blurriness.
    gfx::Size scaled_size = gfx::ScaleToRoundedSize(size(), scale);
  
-@@ -499,20 +468,7 @@ void StatusView::OnPaint(gfx::Canvas* ca
+@@ -497,20 +468,7 @@ void StatusView::OnPaint(gfx::Canvas* ca
    // where the web content is visible.
    const int shadow_thickness_pixels = std::floor(kShadowThickness * scale);
  
@@ -104,7 +102,7 @@
    canvas->ClipRect(clip_rect);
  
    gfx::RectF bubble_rect{gfx::SizeF(scaled_size)};
-@@ -522,11 +478,7 @@ void StatusView::OnPaint(gfx::Canvas* ca
+@@ -520,11 +478,7 @@ void StatusView::OnPaint(gfx::Canvas* ca
    // bubble bounds by 1 DIP minus 1 pixel. Failing to do this results in drawing
    // further and further outside the window as the scale increases.
    const int inset = shadow_thickness_pixels - 1;
@@ -117,7 +115,7 @@
    // Align to pixel centers now that the layout is correct.
    bubble_rect.Inset(0.5);
  
-@@ -553,9 +505,6 @@ void StatusView::OnPaint(gfx::Canvas* ca
+@@ -551,9 +505,6 @@ void StatusView::OnPaint(gfx::Canvas* ca
            : kColorStatusBubbleBackgroundFrameInactive;
    flags.setColor(color_provider->GetColor(id));
    canvas->sk_canvas()->drawPath(fill_path, flags);
@@ -127,7 +125,7 @@
  }
  
  DEFINE_ENUM_CONVERTERS(StatusView::BubbleState,
-@@ -769,7 +718,9 @@ void StatusBubbleViews::Reposition() {
+@@ -767,7 +718,9 @@ void StatusBubbleViews::Reposition() {
    int overlap = kShadowThickness;
    int height = GetPreferredHeight();
    int base_view_height = base_view_->bounds().height();
@@ -138,7 +136,7 @@
    SetBounds(origin.x(), origin.y(), base_view_->bounds().width() / 3, height);
  }
  
-@@ -807,7 +758,7 @@ int StatusBubbleViews::GetWidthForURL(co
+@@ -805,7 +758,7 @@ int StatusBubbleViews::GetWidthForURL(co
    // Get the width of the elided url
    int elided_url_width = gfx::GetStringWidth(url_string, GetFont());
    // Add proper paddings

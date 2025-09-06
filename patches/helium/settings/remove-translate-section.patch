@@ -1,24 +1,6 @@
---- a/chrome/browser/resources/settings/basic_page/basic_page.html
-+++ b/chrome/browser/resources/settings/basic_page/basic_page.html
-@@ -206,6 +206,7 @@
-                 </settings-spell-check-page>
-               </settings-section>
-             </template>
-+<if expr="False">
-             <settings-section page-title="$i18n{translatePageTitle}"
-                 section="translate" nest-under-section="languages">
-               <settings-translate-page prefs="{{prefs}}"
-@@ -214,6 +215,7 @@
-               </settings-translate-page>
-             </settings-section>
- </if>
-+</if>
-             <template is="dom-if" if="[[showPage_(pageVisibility_.downloads)]]"
-                 restamp>
-               <settings-section page-title="$i18n{downloadsPageTitle}"
 --- a/chrome/browser/resources/settings/languages_page/languages_page.html
 +++ b/chrome/browser/resources/settings/languages_page/languages_page.html
-@@ -82,9 +82,6 @@
+@@ -83,9 +83,6 @@
            <div title="[[item.language.nativeDisplayName]]" role="none">
              [[formatIndex_(index)]]. [[item.language.displayName]]
            </div>
@@ -28,3 +10,17 @@
  <if expr="is_win">
            <div class="explain-selected"
                hidden="[[!isProspectiveUiLanguage_(
+--- a/chrome/browser/resources/settings/languages_page/translate_page.html
++++ b/chrome/browser/resources/settings/languages_page/translate_page.html
+@@ -1,4 +1,5 @@
+ <style include="cr-shared-style settings-shared md-select"></style>
++<if expr="False">
+ <settings-section page-title="$i18n{translatePageTitle}">
+ <settings-toggle-button id="offerTranslateOtherLanguages"
+     pref="{{prefs.translate.enabled}}"
+@@ -98,3 +99,4 @@
+   </settings-add-languages-dialog>
+ </template>
+ </settings-section>
++</if>
+\ No newline at end of file

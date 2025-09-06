@@ -14,7 +14,7 @@
        .product-title {
 @@ -47,7 +44,7 @@
      </style>
-     <settings-section page-title="$i18n{aboutPageTitle}" section="about">
+     <settings-section page-title="$i18n{aboutPageTitle}">
        <div class="cr-row two-line first">
 -        <img id="product-logo" on-click="onProductLogoClick_"
 +        <img id="product-logo"

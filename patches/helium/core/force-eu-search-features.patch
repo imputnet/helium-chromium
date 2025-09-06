@@ -16,7 +16,7 @@
  #include "components/safe_browsing/core/common/features.h"
  #include "components/safe_browsing/core/common/hashprefix_realtime/hash_realtime_utils.h"
  #include "components/saved_tab_groups/public/features.h"
-@@ -2431,14 +2429,9 @@ void AddSearchStrings(content::WebUIData
+@@ -2495,14 +2493,9 @@ void AddSearchStrings(content::WebUIData
    html_source->AddString("searchExplanationLearnMoreURL",
                           chrome::kOmniboxLearnMoreURL);
  
@@ -34,16 +34,15 @@
        "saveGuestChoiceText", IDS_SEARCH_ENGINE_CHOICE_GUEST_SESSION_CHECKBOX);
 --- a/components/regional_capabilities/regional_capabilities_utils.cc
 +++ b/components/regional_capabilities/regional_capabilities_utils.cc
-@@ -54,6 +54,9 @@ void ShufflePrepopulatedEngines(std::vec
+@@ -55,7 +55,7 @@ void ShufflePrepopulatedEngines(std::vec
  }  // namespace
  
  bool IsEeaCountry(country_codes::CountryId country_id) {
-+  if ((true))
-+    return true;
-+
-   // The `HasSearchEngineCountryListOverride()` check is here for compatibility
-   // with the way EEA presence was checked from `search_engines`. But it should
-   // logically be done only when the EEA presence is checked specifically for
+-  return kEeaChoiceCountriesIds.contains(country_id);
++  return true;
+ }
+ 
+ std::optional<SearchEngineCountryOverride> GetSearchEngineCountryOverride() {
 --- a/components/search_engine_choice_strings.grdp
 +++ b/components/search_engine_choice_strings.grdp
 @@ -98,6 +98,10 @@

@@ -11,7 +11,7 @@
        {"loading", IDS_HISTORY_LOADING},
 --- a/chrome/browser/ui/webui/settings/settings_localized_strings_provider.cc
 +++ b/chrome/browser/ui/webui/settings/settings_localized_strings_provider.cc
-@@ -1761,7 +1761,7 @@ void AddPeopleStrings(content::WebUIData
+@@ -1806,7 +1806,7 @@ void AddPeopleStrings(content::WebUIData
        // Top level people strings:
        {"peopleSignInPromptSecondaryWithAccount",
         IDS_SETTINGS_PEOPLE_SIGN_IN_PROMPT_SECONDARY_WITH_ACCOUNT},

@@ -2328,13 +2328,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 +#include "chrome/common/importer/scoped_copy_file.h"
 +#include "chrome/grit/generated_resources.h"
 +#include "chrome/utility/importer/brave_external_process_importer_bridge.h"
-+#include "chrome/utility/importer/favicon_reencode.h"
 +#include "components/os_crypt/sync/os_crypt.h"
 +#include "components/password_manager/core/browser/password_form.h"
 +#include "components/password_manager/core/browser/password_store/login_database.h"
 +#include "components/password_manager/core/common/password_manager_pref_names.h"
 +#include "components/prefs/json_pref_store.h"
 +#include "components/prefs/pref_filter.h"
++#include "components/user_data_importer/content/favicon_reencode.h"
 +#include "components/user_data_importer/common/imported_bookmark_entry.h"
 +#include "components/user_data_importer/common/importer_data_types.h"
 +#include "components/user_data_importer/common/importer_url_row.h"
@@ -2863,7 +2863,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 +#endif  // BRAVE_UTILITY_IMPORTER_CHROME_IMPORTER_H_
 --- a/chrome/app/generated_resources.grd
 +++ b/chrome/app/generated_resources.grd
-@@ -10985,6 +10985,9 @@ Check your passwords anytime in <ph name
+@@ -11002,6 +11002,9 @@ Check your passwords anytime in <ph name
              Microsoft Edge
            </message>
          </if>

@@ -44,7 +44,7 @@
    schemes.secure_schemes.push_back(kChromeUIUntrustedScheme);
    schemes.secure_schemes.push_back(kChromeErrorScheme);
    for (auto& scheme : schemes.secure_schemes)
-@@ -94,6 +97,7 @@ void RegisterContentSchemes(bool should_
+@@ -98,6 +101,7 @@ void RegisterContentSchemes(bool should_
      url::AddNoAccessScheme(scheme.c_str());
  
    schemes.cors_enabled_schemes.push_back(kChromeUIScheme);
@@ -52,7 +52,7 @@
    schemes.cors_enabled_schemes.push_back(kChromeUIUntrustedScheme);
    for (auto& scheme : schemes.cors_enabled_schemes)
      url::AddCorsEnabledScheme(scheme.c_str());
-@@ -122,6 +126,7 @@ void RegisterContentSchemes(bool should_
+@@ -126,6 +130,7 @@ void RegisterContentSchemes(bool should_
    // service workers don't work for chrome[-untrusted]:// when the flag is not
    // enabled.
    schemes.service_worker_schemes.push_back(kChromeUIScheme);
@@ -62,7 +62,7 @@
    // Prevent future modification of the scheme lists. This is to prevent
 --- a/content/renderer/render_thread_impl.cc
 +++ b/content/renderer/render_thread_impl.cc
-@@ -949,10 +949,18 @@ void RenderThreadImpl::RegisterSchemes()
+@@ -914,10 +914,18 @@ void RenderThreadImpl::RegisterSchemes()
        chrome_scheme);
    WebSecurityPolicy::RegisterURLSchemeAsWebUI(chrome_scheme);
  
@@ -103,7 +103,7 @@
      return true;
    }
  
-@@ -634,6 +635,12 @@ base::WeakPtr<content::NavigationHandle>
+@@ -638,6 +639,12 @@ base::WeakPtr<content::NavigationHandle>
      }
    }
  
@@ -118,7 +118,7 @@
    // handling.
 --- a/chrome/browser/extensions/extension_tab_util.cc
 +++ b/chrome/browser/extensions/extension_tab_util.cc
-@@ -1174,7 +1174,8 @@ bool ExtensionTabUtil::IsKillURL(const G
+@@ -1246,7 +1246,8 @@ bool ExtensionTabUtil::IsKillURL(const G
      return true;
    }
  
@@ -130,7 +130,7 @@
  
 --- a/chrome/browser/ui/browser.cc
 +++ b/chrome/browser/ui/browser.cc
-@@ -2267,6 +2267,13 @@ void Browser::SetContentsBounds(WebConte
+@@ -2240,6 +2240,13 @@ void Browser::SetContentsBounds(WebConte
  }
  
  void Browser::UpdateTargetURL(WebContents* source, const GURL& url) {
@@ -144,7 +144,7 @@
    std::vector<StatusBubble*> status_bubbles = GetStatusBubbles();
    for (StatusBubble* status_bubble : status_bubbles) {
      StatusBubbleViews* status_bubble_views =
-@@ -2274,7 +2281,7 @@ void Browser::UpdateTargetURL(WebContent
+@@ -2247,7 +2254,7 @@ void Browser::UpdateTargetURL(WebContent
      ContentsWebView* anchor =
          static_cast<ContentsWebView*>(status_bubble_views->base_view());
      if (source == anchor->GetWebContents()) {
@@ -178,7 +178,7 @@
      // expect that to be what is copied to the clipboard.
 --- a/components/url_formatter/url_formatter.cc
 +++ b/components/url_formatter/url_formatter.cc
-@@ -25,6 +25,7 @@
+@@ -20,6 +20,7 @@
  #include "base/strings/utf_string_conversions.h"
  #include "base/threading/thread_local_storage.h"
  #include "build/build_config.h"
@@ -186,7 +186,7 @@
  #include "net/base/registry_controlled_domains/registry_controlled_domain.h"
  #include "third_party/icu/source/common/unicode/uidna.h"
  #include "third_party/icu/source/common/unicode/utypes.h"
-@@ -563,6 +564,7 @@ const FormatUrlType kFormatUrlTrimAfterH
+@@ -564,6 +565,7 @@ const FormatUrlType kFormatUrlTrimAfterH
  const FormatUrlType kFormatUrlOmitFileScheme = 1 << 7;
  const FormatUrlType kFormatUrlOmitMailToScheme = 1 << 8;
  const FormatUrlType kFormatUrlOmitMobilePrefix = 1 << 9;
@@ -194,7 +194,7 @@
  
  const FormatUrlType kFormatUrlOmitDefaults =
      kFormatUrlOmitUsernamePassword | kFormatUrlOmitHTTP |
-@@ -625,6 +627,18 @@ std::u16string FormatUrlWithAdjustments(
+@@ -626,6 +628,18 @@ std::u16string FormatUrlWithAdjustments(
                                 prefix_end, adjustments);
    }
  
@@ -226,7 +226,7 @@
  // bitmask of FormatUrlTypes, see it for details. |unescape_rules| defines how
 --- a/chrome/browser/ui/web_applications/app_browser_controller.cc
 +++ b/chrome/browser/ui/web_applications/app_browser_controller.cc
-@@ -200,7 +200,8 @@ std::u16string AppBrowserController::For
+@@ -201,7 +201,8 @@ std::u16string AppBrowserController::For
      url_formatter::FormatUrlTypes format_types) {
    auto origin = url::Origin::Create(url);
    return url_formatter::FormatUrl(origin.opaque() ? url : origin.GetURL(),

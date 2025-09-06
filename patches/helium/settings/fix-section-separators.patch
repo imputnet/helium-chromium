@@ -1,21 +1,18 @@
 --- a/chrome/browser/resources/settings/a11y_page/a11y_page.html
 +++ b/chrome/browser/resources/settings/a11y_page/a11y_page.html
-@@ -11,14 +11,7 @@
+@@ -10,11 +10,7 @@
  </if>
  
  <if expr="is_macosx or is_win">
 -        <template is="dom-if" if="[[enableLiveCaption_]]">
--          <settings-live-caption prefs="{{prefs}}"
--              languages="[[languages]]"
--              language-helper="[[languageHelper]]">
--          </settings-live-caption>
+-          <settings-live-caption prefs="{{prefs}}"></settings-live-caption>
 -        </template>
          <cr-link-row id="captions"
 -            class="hr"
              label="$i18n{captionsPreferencesTitle}"
              sub-label="$i18n{captionsPreferencesSubtitle}"
              on-click="onCaptionsClick_"
-@@ -29,7 +22,6 @@
+@@ -25,7 +21,6 @@
  
  <if expr="is_linux">
            <cr-link-row id="captions"
@@ -25,9 +22,9 @@
                role-description="$i18n{subpageArrowRoleDescription}">
 --- a/chrome/browser/resources/settings/languages_page/spell_check_page.html
 +++ b/chrome/browser/resources/settings/languages_page/spell_check_page.html
-@@ -57,7 +57,7 @@
- <settings-animated-pages id="pages" section="spellCheck"
-     focus-config="[[focusConfig_]]">
+@@ -56,7 +56,7 @@
+ </style>
+ <settings-section page-title="$i18n{spellCheckTitle}">
    <div route-path="default">
 -    <settings-toggle-button id="enableSpellcheckingToggle" class="hr"
 +    <settings-toggle-button id="enableSpellcheckingToggle"

@@ -1,45 +1,18 @@
 --- a/chrome/browser/resources/settings/people_page/people_page.html
 +++ b/chrome/browser/resources/settings/people_page/people_page.html
-@@ -122,12 +122,6 @@ shown on non-ChromeOS platforms -->
-           </div>
+@@ -124,12 +124,6 @@
+           </template>
          </template> <!-- if="[[!shouldShowSyncAccountControl_()]]" -->
  
 -        <cr-link-row id="sync-setup"
 -            label="$i18n{syncAndNonPersonalizedServices}"
 -            on-click="onSyncClick_"
--            role-description="$i18n{subpageArrowRoleDescription}">
+-            role-description="$i18n{subpageArrowRoleDescription}"
+-            hidden="[[shouldHideSyncSetupLinkRow_(syncStatus)]]">
 -        </cr-link-row>
--
- <if expr="not chromeos_ash">
-         <template is="dom-if" if="[[signinAllowed_]]">
-           <cr-link-row id="manage-google-account"
-@@ -159,26 +153,6 @@ shown on non-ChromeOS platforms -->
- </if>
- 
-       </div>
--      <template is="dom-if" route-path="/syncSetup">
--        <settings-subpage
--            associated-control="[[$$('#sync-setup')]]"
--            page-title="$i18n{syncPageTitle}"
--            learn-more-url="$i18n{syncAndGoogleServicesLearnMoreURL}">
--          <settings-sync-page
--              sync-status="[[syncStatus]]" prefs="{{prefs}}"
--              focus-config="[[focusConfig_]]">
--          </settings-sync-page>
--        </settings-subpage>
--      </template>
--
--      <template is="dom-if" route-path="/syncSetup/advanced">
--        <settings-subpage page-title="$i18n{syncAdvancedPageTitle}"
--            associated-control="[[$$('#sync-setup')]]"
--            learn-more-url="$i18n{syncAndGoogleServicesLearnMoreURL}">
--          <settings-sync-controls sync-status="[[syncStatus]]">
--          </settings-sync-controls>
--        </settings-subpage>
--      </template>
- 
- <if expr="not chromeos_ash">
-       <template is="dom-if" route-path="/manageProfile">
+         <template is="dom-if" if="[[shouldHideSyncSetupLinkRow_(syncStatus)]]"
+             restamp>
+           <cr-link-row id="google-services"
 --- a/chrome/browser/resources/settings/privacy_page/personalization_options.html
 +++ b/chrome/browser/resources/settings/privacy_page/personalization_options.html
 @@ -113,15 +113,6 @@
@@ -72,34 +45,26 @@
 -    return (pageVisibility.privacy as PrivacyPageVisibility).searchPrediction;
 -  }
 -
-   // <if expr="chromeos_ash">
+   // <if expr="is_chromeos">
    private navigateTo_(url: string): void {
      window.location.href = url;
 --- a/chrome/browser/resources/settings/route.ts
 +++ b/chrome/browser/resources/settings/route.ts
-@@ -182,9 +182,6 @@ function createRoutes(): SettingsRoutes
-     r.IMPORT_DATA = r.PEOPLE.createChild('/importData');
-     r.IMPORT_DATA.isNavigableDialog = true;
+@@ -202,11 +202,6 @@ function createRoutes(): SettingsRoutes
+     r.MANAGE_PROFILE = r.PEOPLE.createChild('/manageProfile');
+     r.MANAGE_PROFILE.hasMigratedToPlugin = true;
      // </if>
 -
 -    r.SYNC = r.PEOPLE.createChild('/syncSetup');
+-    r.SYNC.hasMigratedToPlugin = true;
 -    r.SYNC_ADVANCED = r.SYNC.createChild('/syncSetup/advanced');
+-    r.SYNC_ADVANCED.hasMigratedToPlugin = true;
    }
  
-   const visibility = pageVisibility || {};
-@@ -195,9 +192,6 @@ function createRoutes(): SettingsRoutes
-     if (loadTimeData.getBoolean('showTabOrganizationControl')) {
-       r.AI_TAB_ORGANIZATION = r.AI.createChild('/ai/tabOrganizer');
-     }
--    if (loadTimeData.getBoolean('showHistorySearchControl')) {
--      r.HISTORY_SEARCH = r.AI.createChild('/ai/historySearch');
--    }
-     if (loadTimeData.getBoolean('showComposeControl')) {
-       r.OFFER_WRITING_HELP = r.AI.createChild('/ai/helpMeWrite');
-     }
+   if (visibility.ai !== false && loadTimeData.getBoolean('showAiPage')) {
 --- a/chrome/browser/resources/settings/search_page/search_page.html
 +++ b/chrome/browser/resources/settings/search_page/search_page.html
-@@ -75,6 +75,14 @@
+@@ -74,6 +74,14 @@
          <div>[[confirmationToastLabel_]]</div>
        </cr-toast>
      </div>
