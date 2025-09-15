@@ -358,14 +358,11 @@
      EnterTabClosingMode(
          tabs_view_model_.ideal_bounds(GetTabCount() - 1).right() -
              current_group_width + collapsed_group_width,
-@@ -721,6 +758,15 @@ int TabContainerImpl::GetAvailableWidthF
+@@ -721,6 +758,12 @@ int TabContainerImpl::GetAvailableWidthF
               : parent()->GetAvailableSize(this).width().value();
  }
  
 +int TabContainerImpl::GetAvailableHeightForTabContainer() const {
-+  // Falls back to views::View::GetAvailableSize() when
-+  // `available_width_callback_` is not defined, e.g. when tab scrolling is
-+  // disabled.
 +  return available_height_callback_
 +             ? available_height_callback_.Run()
 +             : parent()->GetAvailableSize(this).height().value();
@@ -374,7 +371,7 @@
  void TabContainerImpl::EnterTabClosingMode(std::optional<int> override_width,
                                             CloseTabSource source) {
    // Tab closing mode only makes sense if the tab was closed as a direct result
-@@ -792,7 +838,7 @@ void TabContainerImpl::SetTabSlotVisibil
+@@ -792,7 +835,7 @@ void TabContainerImpl::SetTabSlotVisibil
      const bool is_collapsed =
          (current_group.has_value() &&
           controller_->IsGroupCollapsed(current_group.value()) &&
@@ -383,7 +380,7 @@
      const bool should_be_visible = is_collapsed ? false : last_tab_visible;
  
      // If we change the visibility of a tab in a group, we must recalculate that
-@@ -883,6 +929,10 @@ void TabContainerImpl::PaintChildren(con
+@@ -883,6 +926,10 @@ void TabContainerImpl::PaintChildren(con
  }
  
  gfx::Size TabContainerImpl::GetMinimumSize() const {
@@ -394,7 +391,7 @@
    // During animations, our minimum width tightly hugs the current bounds of our
    // children.
    std::optional<int> minimum_width = GetMidAnimationTrailingX();
-@@ -900,6 +950,25 @@ gfx::Size TabContainerImpl::GetMinimumSi
+@@ -900,6 +947,25 @@ gfx::Size TabContainerImpl::GetMinimumSi
  
  gfx::Size TabContainerImpl::CalculatePreferredSize(
      const views::SizeBounds& available_size) const {
@@ -420,7 +417,7 @@
    // During animations, our preferred width tightly hugs the current bounds of
    // our children.
    std::optional<int> preferred_width = GetMidAnimationTrailingX();
-@@ -1214,6 +1283,22 @@ void TabContainerImpl::AnimateScrollToSh
+@@ -1214,6 +1280,22 @@ void TabContainerImpl::AnimateScrollToSh
    tab_scrolling_animation_->Start();
  }
  
@@ -443,7 +440,7 @@
  void TabContainerImpl::AnimateTabSlotViewTo(TabSlotView* tab_slot_view,
                                              const gfx::Rect& target_bounds) {
    // If we don't own the tab, let our controller handle it.
-@@ -1286,14 +1371,22 @@ void TabContainerImpl::StartInsertTabAni
+@@ -1286,14 +1368,22 @@ void TabContainerImpl::StartInsertTabAni
    // Adjust the starting bounds of the new tab.
    const int tab_overlap = TabStyle::Get()->GetTabOverlap();
    if (model_index > 0) {
@@ -471,7 +468,7 @@
    }
  
    // Start at the width of the overlap in order to animate at the same speed
-@@ -1313,7 +1406,8 @@ void TabContainerImpl::StartRemoveTabAni
+@@ -1313,7 +1403,8 @@ void TabContainerImpl::StartRemoveTabAni
    UpdateIdealBounds();
    if (in_tab_close_ && GetTabCount() > 0 &&
        override_available_width_for_tabs_ >
@@ -481,7 +478,7 @@
      // Tab closing mode is no longer constraining tab widths - they're at full
      // size. Exit tab closing mode so that it doesn't artificially inflate our
      // bounds.
-@@ -1364,11 +1458,15 @@ gfx::Rect TabContainerImpl::GetTargetBou
+@@ -1364,11 +1455,15 @@ gfx::Rect TabContainerImpl::GetTargetBou
    // Compute the target bounds for animating this tab closed.  The tab's left
    // edge should stay joined to the right edge of the previous tab, if any.
    gfx::Rect target_bounds = tab->bounds();
@@ -502,7 +499,7 @@
  
    // The tab should animate to the width of the overlap in order to close at the
    // same speed the surrounding tabs are moving, since at this width the
-@@ -1648,7 +1746,7 @@ bool TabContainerImpl::ShouldTabBeVisibl
+@@ -1648,7 +1743,7 @@ bool TabContainerImpl::ShouldTabBeVisibl
    // N.B. This is separate from the tab being potentially scrolled offscreen -
    // this solely determines whether the tab should be clipped for the
    // pre-scrolling overflow behavior.
@@ -511,7 +508,7 @@
      return true;
    }
  
-@@ -1817,4 +1915,5 @@ bool TabContainerImpl::IsValidModelIndex
+@@ -1817,4 +1912,5 @@ bool TabContainerImpl::IsValidModelIndex
  
  BEGIN_METADATA(TabContainerImpl)
  ADD_READONLY_PROPERTY_METADATA(int, AvailableWidthForTabContainer)
@@ -553,6 +550,25 @@
  };
  
  #endif  // CHROME_BROWSER_UI_VIEWS_TABS_TAB_CONTAINER_IMPL_H_
+--- a/chrome/browser/ui/views/tabs/tab_hover_card_bubble_view.cc
++++ b/chrome/browser/ui/views/tabs/tab_hover_card_bubble_view.cc
+@@ -24,6 +24,7 @@
+ #include "chrome/browser/ui/tabs/saved_tab_groups/collaboration_messaging_tab_data.h"
+ #include "chrome/browser/ui/tabs/tab_renderer_data.h"
+ #include "chrome/browser/ui/tabs/tab_style.h"
++#include "chrome/browser/ui/tabs/features.h"
+ #include "chrome/browser/ui/thumbnails/thumbnail_image.h"
+ #include "chrome/browser/ui/ui_features.h"
+ #include "chrome/browser/ui/views/chrome_typography.h"
+@@ -362,6 +363,8 @@ DEFINE_CLASS_ELEMENT_IDENTIFIER_VALUE(Ta
+ TabHoverCardBubbleView::TabHoverCardBubbleView(Tab* tab,
+                                                const InitParams& params)
+     : BubbleDialogDelegateView(tab,
++                               tabs::AreHeliumVerticalTabsEnabled() ?
++                               views::BubbleBorder::LEFT_TOP :
+                                views::BubbleBorder::TOP_LEFT,
+                                views::BubbleBorder::STANDARD_SHADOW),
+       tab_style_(TabStyle::Get()),
 --- a/chrome/browser/ui/views/tabs/tab_strip.cc
 +++ b/chrome/browser/ui/views/tabs/tab_strip.cc
 @@ -59,7 +59,7 @@
