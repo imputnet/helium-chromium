@@ -153,6 +153,7 @@ helium/core/add-disable-ech-flag.patch
 helium/core/disable-outdated-build-detector.patch
 helium/core/remove-dead-toolbar-actions.patch
 helium/core/protect-browser-keyboard-shortcuts.patch
+helium/core/ublock-origin-component.patch
 
 helium/settings/move-search-suggest.patch
 helium/settings/remove-autofill.patch
@@ -172,7 +173,6 @@ helium/settings/remove-dead-imports.patch
 
 helium/hop/setup.patch
 helium/hop/disable-password-manager.patch
-helium/hop/preinstall-ublock-origin.patch
 
 helium/ui/update-cr-components.patch
 helium/ui/always-use-better-ntp.patch
