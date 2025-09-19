@@ -1,0 +1,71 @@
+--- a/components/webui/flags/resources/app.css
++++ b/components/webui/flags/resources/app.css
+@@ -106,8 +106,8 @@ button {
+ }
+ 
+ :focus-visible {
+-  box-shadow: 0 0 0 2px var(--focus-shadow-color);
+-  outline: none;
++  outline: var(--focus-shadow-color) 2px solid;
++  outline-offset: 2px;
+ }
+ 
+ @media (forced-colors: active) {
+@@ -160,7 +160,7 @@ button {
+ #header .flex-container {
+   box-sizing: border-box;
+   margin: 0 auto;
+-  max-width: 700px;
++  max-width: calc(700px + 2rem);
+ }
+ 
+ #header .flex-container .flex:first-child {
+@@ -186,14 +186,18 @@ button {
+   background: var(--input-background)
+       url(chrome://resources/images/icon_search.svg) no-repeat 8px 50%;
+   border: 1px solid transparent;
+-  border-radius: 3px;
++  border-radius: 8px;
+   box-sizing: border-box;
+   color: inherit;
+-  font-size: .8125rem;
+-  padding: 12px 36px;
++  font-size: 14px;
++  padding: 9px 38px;
+   width: 100%;
+ }
+ 
++#header .flex-container .flex:last-child {
++  flex: unset;
++}
++
+ #search::placeholder {
+   color: rgba(var(--google-grey-900-rgb), .71);
+ }
+--- a/components/webui/flags/resources/experiment.css
++++ b/components/webui/flags/resources/experiment.css
+@@ -12,8 +12,8 @@
+ }
+ 
+ :focus-visible {
+-  box-shadow: 0 0 0 2px var(--focus-shadow-color);
+-  outline: none;
++  outline: var(--focus-shadow-color) 2px solid;
++  outline-offset: 2px;
+ }
+ 
+ .experiment {
+@@ -89,11 +89,12 @@ select {
+   border: 1px solid var(--link-color);
+   color: var(--link-color);
+   font-size: .8125rem;
+-  height: 1.625rem;
++  height: 1.8rem;
+   letter-spacing: .01em;
+   max-width: 150px;
+   text-align-last: center;
+   width: 100%;
++  border-radius: 6px;
+ }
+ 
+ @media (prefers-color-scheme: dark) {
