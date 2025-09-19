@@ -138,7 +138,7 @@ TODO: guard services_page.html with is_mac
 +++ b/chrome/app/settings_strings.grdp
 @@ -1951,6 +1951,12 @@
    <message name="IDS_SETTINGS_HELIUM_SERVICES_SPELLCHECK_TOGGLE_DESCRIPTION" desc="Description of the for enabling/disabling of downloading spellcheck files">
-     When enabled, Helium will fetch dictionary files used for spell checking when requested.
+     Helium will fetch dictionary files used for spell checking when requested. When disabled, spell checking will not work.
    </message>
 +  <message name="IDS_SETTINGS_HELIUM_SERVICES_UPDATE" desc="Toggle for automatic update downloads">
 +    Allow automatic browser updates

@@ -108,6 +108,8 @@ extra/ungoogled-chromium/disable-ai-search-shortcuts.patch
 extra/brave/chrome-importer-files.patch
 extra/brave/custom-importer.patch
 
+helium/core/add-zen-importer.patch
+helium/core/disable-unsupported-importers.patch
 helium/core/fix-building-without-safebrowsing.patch
 helium/core/services-prefs.patch
 helium/core/override-chrome-protocol.patch

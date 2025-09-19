@@ -1,8 +1,6 @@
 # Helium
 Bullshit-free web browser, based on Chromium. Follows [imput](https://github.com/imputnet)'s ethics and norms.
 
-Very WIP, not meant for public/end user consumption, etc.
-
 First and foremost, we're making a good browser for ourselves.
 We don't intend to reinvent the wheel or target everyone, it isn't Helium's goal.
 The main goal is to provide an honest, comfortable, privacy-respecting, and non-invasive experience.
@@ -12,8 +10,11 @@ There's a lot more to Helium, but we don't have a complete set of features yet.
 We'll update the documentation when we're closer to a public release!
 
 ## Platform-specific packaging
-At the moment, we're only working on [Helium for macOS](https://github.com/imputnet/helium-macos).
-We plan to create packaging for Windows & Linux systems in the future, but that's over the horizon for now.
+At the moment, only [Helium for macOS](https://github.com/imputnet/helium-macos) is polished and ready for daily use.
+
+We also have packaging for Linux and Windows, but both of them are WIP:
+- [Helium for Linux](https://github.com/imputnet/helium-linux) (AppImage)
+- [Helium for Windows](https://github.com/imputnet/helium-windows) (no auto-updates yet)
 
 ## Credits
 ### ungoogled-chromium

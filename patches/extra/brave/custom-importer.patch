@@ -212,12 +212,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  IPC_ENUM_TRAITS_MIN_MAX_VALUE(user_data_importer::ImporterType,
                                user_data_importer::TYPE_UNKNOWN,
 -                              user_data_importer::TYPE_EDGE)
-+                              user_data_importer::TYPE_BRAVE)
++                              user_data_importer::TYPE_PERPLEXITY_COMET)
  #else
  IPC_ENUM_TRAITS_MIN_MAX_VALUE(user_data_importer::ImporterType,
                                user_data_importer::TYPE_UNKNOWN,
 -                              user_data_importer::TYPE_BOOKMARKS_FILE)
-+                              user_data_importer::TYPE_BRAVE)
++                              user_data_importer::TYPE_PERPLEXITY_COMET)
  #endif
  
  IPC_ENUM_TRAITS_MIN_MAX_VALUE(user_data_importer::ImportItem,
@@ -588,13 +588,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
            </message>
          </if>
 +        <message name="IDS_IMPORTED_FROM_BOOKMARK_FOLDER" desc="Name for bookmark panel folder imported from another browser">
-+          Imported from <ph name="BROWSER_NAME">$1<ex>Chrome</ex></ph>.
++          Imported from <ph name="BROWSER_NAME">$1<ex>Chrome</ex></ph>
 +        </message>
 +        <message name="IDS_EXTENSIONS_IMPORTER_LOCK_TITLE" desc="Dialog title for importer lock dialog">
 +          Import profile still in use
 +        </message>
 +        <message name="IDS_EXTENSIONS_IMPORTER_LOCK_TEXT" desc="The message to be displayed in the importer-lock dialog">
-+          To import extensions or other settings, please first close the browser you're importing from.
++          To continue importing data, first close the browser you're importing from.
 +        </message>
          <message name="IDS_IMPORT_FROM_FIREFOX" desc="browser combo box: Mozilla Firefox">
            Mozilla Firefox

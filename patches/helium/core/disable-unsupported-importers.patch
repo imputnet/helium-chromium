@@ -1,0 +1,14 @@
+--- a/chrome/browser/importer/importer_list.cc
++++ b/chrome/browser/importer/importer_list.cc
+@@ -254,6 +254,11 @@ std::vector<user_data_importer::SourcePr
+     profiles.push_back(bookmarks_profile);
+   }
+ 
++  for (auto& profile : profiles) {
++    profile.services_supported &= ~(user_data_importer::PASSWORDS
++                                    | user_data_importer::AUTOFILL_FORM_DATA);
++  }
++
+   return profiles;
+ }
+ 

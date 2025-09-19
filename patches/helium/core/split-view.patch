@@ -9,15 +9,33 @@
  
  // The delay before showing the drop target for the side-by-side drag-and-drop
  // entrypoint.
-@@ -128,7 +128,7 @@ BASE_FEATURE_PARAM(base::TimeDelta,
+@@ -128,22 +128,22 @@ BASE_FEATURE_PARAM(base::TimeDelta,
                     kSideBySideShowDropTargetDelay,
                     &kSideBySide,
                     "drop_target_show_delay",
 -                   base::Milliseconds(500));
-+                   base::Milliseconds(200));
++                   base::Milliseconds(250));
  BASE_FEATURE_PARAM(int,
                     kSideBySideDropTargetMinWidth,
                     &kSideBySide,
+                    "drop_target_min_width",
+-                   120);
++                   50);
+ BASE_FEATURE_PARAM(int,
+                    kSideBySideDropTargetMaxWidth,
+                    &kSideBySide,
+                    "drop_target_max_width",
+-                   360);
++                   80);
+ BASE_FEATURE_PARAM(int,
+                    kSideBySideDropTargetTargetWidthPercentage,
+                    &kSideBySide,
+                    "drop_target_width_percentage",
+-                   30);
++                   5);
+ 
+ constexpr base::FeatureParam<MiniToolbarActiveConfiguration>::Option
+     kMiniToolbarActiveConfigurationOptions[] = {
 @@ -169,7 +169,7 @@ BASE_FEATURE_PARAM(int,
  // startup.
  BASE_FEATURE(kSideBySideSessionRestore,
@@ -364,10 +382,33 @@
 +constexpr int kOuterPadding = 0;
  constexpr int kIconSize = 24;
 -constexpr int kAnimationDurationMs = 450;
-+constexpr int kAnimationDurationMs = 250;
++constexpr int kAnimationDurationMs = 300;
  
  }  // namespace
  
+@@ -60,13 +60,8 @@ MultiContentsDropTargetView::MultiConten
+           views::FlexSpecification(views::MinimumFlexSizeRule::kScaleToZero,
+                                    views::MaximumFlexSizeRule::kUnbounded));
+ 
+-  SetBackground(views::CreateSolidBackground(ui::kColorPrimaryBackground));
+-
+   auto inner_container = std::make_unique<views::View>();
+ 
+-  inner_container->SetBackground(views::CreateRoundedRectBackground(
+-      ui::kColorSysSurface3, kInnerCornerRadius));
+-
+   inner_container->SetLayoutManager(std::make_unique<views::FlexLayout>())
+       ->SetOrientation(views::LayoutOrientation::kVertical)
+       .SetMainAxisAlignment(views::LayoutAlignment::kCenter)
+@@ -169,7 +164,7 @@ bool MultiContentsDropTargetView::Should
+ 
+ void MultiContentsDropTargetView::OnThemeChanged() {
+   views::View::OnThemeChanged();
+-  SkColor primary_color = GetColorProvider()->GetColor(ui::kColorSysPrimary);
++  SkColor primary_color = GetColorProvider()->GetColor(ui::kColorMenuIcon);
+   ui::ImageModel icon_image_model =
+       ui::ImageModel::FromVectorIcon(kAddCircleIcon, primary_color, kIconSize);
+   icon_view_->SetImage(icon_image_model);
 --- a/components/omnibox/common/omnibox_features.cc
 +++ b/components/omnibox/common/omnibox_features.cc
 @@ -380,7 +380,7 @@ BASE_FEATURE(kPreconnectNonSearchOmnibox

@@ -152,7 +152,7 @@
 +    Allow downloading dictionary files for spell checking
 +  </message>
 +  <message name="IDS_SETTINGS_HELIUM_SERVICES_SPELLCHECK_TOGGLE_DESCRIPTION" desc="Description of the for enabling/disabling of downloading spellcheck files">
-+    When enabled, Helium will fetch dictionary files used for spell checking when requested.
++    Helium will fetch dictionary files used for spell checking when requested. When disabled, spell checking will not work.
 +  </message>
    <message name="IDS_SETTINGS_HELIUM_SERVICES_OVERRIDE" desc="Text input for overriding the Helium services server">
      Use your own instance of Helium services

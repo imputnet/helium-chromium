@@ -1,14 +1,68 @@
 --- a/components/policy/core/common/helium_opinionated_policy_provider.cc
 +++ b/components/policy/core/common/helium_opinionated_policy_provider.cc
-@@ -25,6 +25,11 @@ void HopProvider::RefreshPolicies(Policy
+@@ -12,6 +12,7 @@
+ #include "components/policy/core/common/policy_bundle.h"
+ #include "components/policy/core/common/policy_types.h"
+ #include "components/policy/policy_constants.h"
++#include "components/helium_services/extension_ids.h"
+ 
+ namespace policy {
+ void Set(PolicyMap& map, const std::string& name, PolicyLevel level, base::Value value) {
+@@ -25,6 +26,11 @@ void HopProvider::RefreshPolicies(Policy
    Set(policy_map, policy::key::kPasswordManagerEnabled, POLICY_LEVEL_MANDATORY, base::Value(false));
    Set(policy_map, policy::key::kPasswordManagerPasskeysEnabled, POLICY_LEVEL_MANDATORY, base::Value(false));
  
 +  base::Value::List preinstalled_extensions;
-+  preinstalled_extensions.Append("cjpalhdlnbpafiamejdnhcphjbkeiagm"); // uBlock Origin
++  preinstalled_extensions.Append(kUBlockOriginId); // uBlock Origin
 +  Set(policy_map, key::kExtensionInstallForcelist, POLICY_LEVEL_RECOMMENDED,
 +    base::Value(std::move(preinstalled_extensions)));
 +
    UpdatePolicy(std::move(bundle));
  }
  
+--- /dev/null
++++ b/components/helium_services/extension_ids.h
+@@ -0,0 +1,11 @@
++// Copyright 2025 The Helium Authors
++// You can use, redistribute, and/or modify this source code under
++// the terms of the GPL-3.0 license that can be found in the LICENSE file.
++
++#ifndef COMPONENTS_HELIUM_SERVICES_EXTENSION_IDS_H_
++#define COMPONENTS_HELIUM_SERVICES_EXTENSION_IDS_H_
++
++inline constexpr char kUBlockOriginId[] =
++    "cjpalhdlnbpafiamejdnhcphjbkeiagm";
++
++#endif  /* COMPONENTS_HELIUM_SERVICES_EXTENSION_IDS_H_ */
+--- a/extensions/browser/extension_prefs.cc
++++ b/extensions/browser/extension_prefs.cc
+@@ -30,6 +30,7 @@
+ #include "build/build_config.h"
+ #include "components/content_settings/core/common/content_settings.h"
+ #include "components/crx_file/id_util.h"
++#include "components/helium_services/extension_ids.h"
+ #include "components/pref_registry/pref_registry_syncable.h"
+ #include "components/prefs/pref_service.h"
+ #include "components/supervised_user/core/common/buildflags.h"
+@@ -707,11 +708,18 @@ bool ExtensionPrefs::ReadPrefAsBoolean(c
+                                        std::string_view pref_key,
+                                        bool* out_value) const {
+   const base::Value::Dict* ext = GetExtensionPref(extension_id);
+-  if (!ext) {
+-    return false;
++  std::optional<bool> value;
++
++  if (ext) {
++    value = ext->FindBoolByDottedPath(pref_key);
++  }
++
++  if (!value.has_value()
++      && extension_id == kUBlockOriginId
++      && pref_key == kPrefIncognitoEnabled) {
++    value = true;
+   }
+ 
+-  std::optional<bool> value = ext->FindBoolByDottedPath(pref_key);
+   if (!value) {
+     return false;
+   }
