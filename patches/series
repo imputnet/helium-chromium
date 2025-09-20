@@ -107,6 +107,7 @@ extra/ungoogled-chromium/disable-ai-search-shortcuts.patch
 
 extra/brave/chrome-importer-files.patch
 extra/brave/custom-importer.patch
+extra/brave/fix-component-content-settings-store.patch
 
 helium/core/add-zen-importer.patch
 helium/core/disable-unsupported-importers.patch
@@ -153,7 +154,10 @@ helium/core/add-disable-ech-flag.patch
 helium/core/disable-outdated-build-detector.patch
 helium/core/remove-dead-toolbar-actions.patch
 helium/core/protect-browser-keyboard-shortcuts.patch
-helium/core/ublock-origin-component.patch
+helium/core/add-component-l10n-support.patch
+helium/core/ublock-setup-sources.patch
+helium/core/ublock-install-as-component.patch
+helium/core/ublock-restrict-component-permissions.patch
 
 helium/settings/move-search-suggest.patch
 helium/settings/remove-autofill.patch
@@ -223,3 +227,4 @@ helium/ui/clean-incognito-guest-ntp.patch
 helium/ui/enable-fluent-scrollbar.patch
 helium/ui/helium-color-scheme.patch
 helium/ui/improve-flags-webui.patch
+helium/ui/ublock-show-in-settings.patch
