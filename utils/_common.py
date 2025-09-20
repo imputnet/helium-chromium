@@ -1,5 +1,9 @@
 # -*- coding: UTF-8 -*-
 
+# Copyright 2025 The Helium Authors
+# You can use, redistribute, and/or modify this source code under
+# the terms of the GPL-3.0 license that can be found in the LICENSE file.
+
 # Copyright (c) 2020 The ungoogled-chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE.ungoogled_chromium file.
@@ -30,6 +34,7 @@ class PlatformEnum(enum.Enum):
 class ExtractorEnum: #pylint: disable=too-few-public-methods
     """Enum for extraction binaries"""
     SEVENZIP = '7z'
+    ZIP = 'zip'
     TAR = 'tar'
     WINRAR = 'winrar'
 

@@ -1,0 +1,238 @@
+--- a/extensions/common/extension_l10n_util.h
++++ b/extensions/common/extension_l10n_util.h
+@@ -81,7 +81,8 @@ bool LocalizeManifest(const extensions::
+ bool LocalizeExtension(const base::FilePath& extension_path,
+                        base::Value::Dict* manifest,
+                        GzippedMessagesPermission gzip_permission,
+-                       std::string* error);
++                       std::string* error,
++                       bool is_component = false);
+ 
+ // Adds locale_name to the extension if it's in chrome_locales, and
+ // if messages file is present (we don't check content of messages file here).
+@@ -129,6 +130,11 @@ extensions::MessageBundle* LoadMessageCa
+     GzippedMessagesPermission gzip_permission,
+     std::string* error);
+ 
++extensions::MessageBundle* LoadComponentMessageCatalogs(
++    const base::FilePath& extension_root,
++    const std::string& default_locale,
++    std::string* error);
++
+ // Loads message catalogs for all locales to check for validity. Used for
+ // validating unpacked extensions.
+ bool ValidateExtensionLocales(const base::FilePath& extension_path,
+--- a/extensions/common/extension_l10n_util.cc
++++ b/extensions/common/extension_l10n_util.cc
+@@ -18,14 +18,18 @@
+ #include "base/files/file_enumerator.h"
+ #include "base/files/file_util.h"
+ #include "base/json/json_file_value_serializer.h"
++#include "base/json/json_string_value_serializer.h"
+ #include "base/json/json_reader.h"
+ #include "base/logging.h"
++#include "base/memory/ref_counted_memory.h"
+ #include "base/no_destructor.h"
+ #include "base/strings/strcat.h"
+ #include "base/strings/string_util.h"
+ #include "base/strings/stringprintf.h"
+ #include "base/strings/utf_string_conversions.h"
+ #include "base/values.h"
++#include "extensions/browser/component_extension_resource_manager.h"
++#include "extensions/browser/extensions_browser_client.h"
+ #include "extensions/common/constants.h"
+ #include "extensions/common/error_utils.h"
+ #include "extensions/common/extension.h"
+@@ -38,6 +42,7 @@
+ #include "third_party/icu/source/common/unicode/uloc.h"
+ #include "third_party/zlib/google/compression_utils.h"
+ #include "ui/base/l10n/l10n_util.h"
++#include "ui/base/resource/resource_bundle.h"
+ 
+ namespace errors = extensions::manifest_errors;
+ namespace keys = extensions::manifest_keys;
+@@ -113,6 +118,19 @@ std::optional<base::Value::Dict> LoadMes
+   return dictionary;
+ }
+ 
++std::optional<base::Value::Dict> LoadMessageFile(
++    int resource_id, std::string* error) {
++  const ui::ResourceBundle& rb = ui::ResourceBundle::GetSharedInstance();
++  JSONStringValueDeserializer messages_deserializer(
++      base::as_string_view(*rb.LoadDataResourceBytes(resource_id)));
++
++  if (auto value = messages_deserializer.Deserialize(nullptr, error); value) {
++    return std::move(*value).TakeDict();
++  }
++
++  return std::nullopt;
++}
++
+ // Localizes manifest value of string type for a given key.
+ bool LocalizeManifestValue(const std::string& key,
+                            const extensions::MessageBundle& messages,
+@@ -360,13 +378,16 @@ bool LocalizeManifest(const extensions::
+ bool LocalizeExtension(const base::FilePath& extension_path,
+                        base::Value::Dict* manifest,
+                        GzippedMessagesPermission gzip_permission,
+-                       std::string* error) {
++                       std::string* error,
++                       bool is_component) {
+   DCHECK(manifest);
+ 
+   std::string default_locale = GetDefaultLocaleFromManifest(*manifest, error);
+ 
+   std::unique_ptr<extensions::MessageBundle> message_bundle(
+-      extensions::file_util::LoadMessageBundle(extension_path, default_locale,
++      is_component ? extensions::file_util::LoadComponentMessageBundle(extension_path,
++                                                                default_locale, error)
++      : extensions::file_util::LoadMessageBundle(extension_path, default_locale,
+                                                gzip_permission, error));
+ 
+   if (!message_bundle && !error->empty())
+@@ -504,6 +525,42 @@ extensions::MessageBundle* LoadMessageCa
+   return extensions::MessageBundle::Create(catalogs, error);
+ }
+ 
++extensions::MessageBundle* LoadComponentMessageCatalogs(
++    const base::FilePath& extension_root,
++    const std::string& default_locale,
++    std::string* error) {
++  std::vector<std::string> all_fallback_locales;
++  base::FilePath locale_path(extensions::kLocaleFolder);
++
++  auto* manager =
++      extensions::ExtensionsBrowserClient::Get()->GetComponentExtensionResourceManager();
++
++  GetAllFallbackLocales(default_locale, &all_fallback_locales);
++
++  extensions::MessageBundle::CatalogVector catalogs;
++  for (const auto& fallback_locale : all_fallback_locales) {
++    base::FilePath this_locale_path =
++      locale_path.AppendASCII(fallback_locale)
++                 .AppendASCII(extensions::kMessagesFilename);
++    int resource_id = 0;
++
++    if (!manager->IsComponentExtensionResource(
++          extension_root, this_locale_path, &resource_id)) {
++      continue;
++    }
++
++    std::optional<base::Value::Dict> catalog = LoadMessageFile(resource_id, error);
++    if (!catalog.has_value()) {
++      return nullptr;
++    }
++
++    catalogs.push_back(std::move(*catalog));
++  }
++
++  return extensions::MessageBundle::Create(
++           catalogs, error);
++}
++
+ bool ValidateExtensionLocales(const base::FilePath& extension_path,
+                               const base::Value::Dict& manifest,
+                               std::string* error) {
+--- a/extensions/browser/l10n_file_util.h
++++ b/extensions/browser/l10n_file_util.h
+@@ -47,7 +47,8 @@ LoadMessageBundleSubstitutionMapFromPath
+     const std::vector<base::FilePath>& paths,
+     const ExtensionId& extension_id,
+     const std::string& default_locale,
+-    extension_l10n_util::GzippedMessagesPermission gzip_permission);
++    extension_l10n_util::GzippedMessagesPermission gzip_permission,
++    bool is_component = false);
+ 
+ }  // namespace extensions::l10n_file_util
+ 
+--- a/extensions/browser/l10n_file_util.cc
++++ b/extensions/browser/l10n_file_util.cc
+@@ -38,7 +38,8 @@ LoadMessageBundleSubstitutionMapFromPath
+     const std::vector<base::FilePath>& paths,
+     const ExtensionId& extension_id,
+     const std::string& default_locale,
+-    extension_l10n_util::GzippedMessagesPermission gzip_permission) {
++    extension_l10n_util::GzippedMessagesPermission gzip_permission,
++    bool is_component) {
+   std::unique_ptr<MessageBundle::SubstitutionMap> return_value =
+       LoadNonLocalizedMessageBundleSubstitutionMap(extension_id);
+ 
+@@ -49,8 +50,13 @@ LoadMessageBundleSubstitutionMapFromPath
+ 
+   std::string error;
+   for (const base::FilePath& path : paths) {
+-    std::unique_ptr<MessageBundle> bundle(file_util::LoadMessageBundle(
+-        path, default_locale, gzip_permission, &error));
++    std::unique_ptr<MessageBundle> bundle(
++        is_component
++        ? file_util::LoadComponentMessageBundle(
++            path, default_locale, &error)
++        : file_util::LoadMessageBundle(
++            path, default_locale, gzip_permission, &error));
++
+     if (bundle) {
+       for (const auto& iter : *bundle->dictionary()) {
+         // |insert| only adds new entries, and does not replace entries in
+--- a/extensions/common/file_util.h
++++ b/extensions/common/file_util.h
+@@ -162,6 +162,11 @@ MessageBundle* LoadMessageBundle(
+     extension_l10n_util::GzippedMessagesPermission gzip_permission,
+     std::string* error);
+ 
++MessageBundle* LoadComponentMessageBundle(
++      const base::FilePath& extension_root,
++      const std::string& default_locale,
++      std::string* error);
++
+ // Helper functions for getting paths for files used in content verification.
+ base::FilePath GetVerifiedContentsPath(const base::FilePath& extension_path);
+ base::FilePath GetComputedHashesPath(const base::FilePath& extension_path);
+--- a/extensions/common/file_util.cc
++++ b/extensions/common/file_util.cc
+@@ -593,6 +593,25 @@ MessageBundle* LoadMessageBundle(
+   return message_bundle;
+ }
+ 
++MessageBundle* LoadComponentMessageBundle(
++      const base::FilePath& extension_root,
++      const std::string& default_locale,
++      std::string* error) {
++  error->clear();
++
++  std::set<std::string> chrome_locales;
++  extension_l10n_util::GetAllLocales(&chrome_locales);
++
++  if (default_locale.empty() || !base::Contains(chrome_locales, default_locale)) {
++    *error = l10n_util::GetStringUTF8(
++        IDS_EXTENSION_LOCALES_NO_DEFAULT_LOCALE_SPECIFIED);
++    return nullptr;
++  }
++
++  return extension_l10n_util::LoadComponentMessageCatalogs(
++      extension_root, default_locale, error);
++}
++
+ base::FilePath GetVerifiedContentsPath(const base::FilePath& extension_path) {
+   return extension_path.Append(kMetadataFolder)
+       .Append(kVerifiedContentsFilename);
+--- a/extensions/browser/renderer_startup_helper.cc
++++ b/extensions/browser/renderer_startup_helper.cc
+@@ -608,6 +608,18 @@ void RendererStartupHelper::GetMessageBu
+     paths_to_load.push_back(imported_extension->path());
+   }
+ 
++  bool is_component =
++    extension->location() == extensions::mojom::ManifestLocation::kComponent;
++
++  if (is_component) {
++    auto dictionary_map = l10n_file_util::LoadMessageBundleSubstitutionMapFromPaths(
++                            paths_to_load, extension_id, default_locale,
++                            extension_l10n_util::GzippedMessagesPermission::kAllowForTrustedSource,
++                            is_component);
++    std::move(callback).Run(ToFlatMap(*dictionary_map));
++    return;
++  }
++
+   // This blocks tab loading. Priority is inherited from the calling context.
+   base::ThreadPool::PostTaskAndReplyWithResult(
+       FROM_HERE, {base::MayBlock()},
