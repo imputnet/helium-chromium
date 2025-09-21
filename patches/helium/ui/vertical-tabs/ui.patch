@@ -1,45 +1,3 @@
---- a/chrome/browser/ui/BUILD.gn
-+++ b/chrome/browser/ui/BUILD.gn
-@@ -4439,8 +4439,8 @@ static_library("ui") {
-       "views/tabs/browser_tab_strip_controller.h",
-       "views/tabs/color_picker_view.cc",
-       "views/tabs/color_picker_view.h",
--      "views/tabs/compound_tab_container.cc",
--      "views/tabs/compound_tab_container.h",
-+      #"views/tabs/compound_tab_container.cc",
-+      #"views/tabs/compound_tab_container.h",
-       "views/tabs/dragging/drag_session_data.cc",
-       "views/tabs/dragging/drag_session_data.h",
-       "views/tabs/dragging/dragging_tabs_session.cc",
---- a/chrome/browser/ui/tabs/features.cc
-+++ b/chrome/browser/ui/tabs/features.cc
-@@ -5,6 +5,7 @@
- #include "chrome/browser/ui/tabs/features.h"
- 
- #include "base/feature_list.h"
-+#include "base/command_line.h"
- #include "chrome/browser/ui/ui_features.h"
- 
- namespace tabs {
-@@ -75,4 +76,8 @@ bool AreVerticalTabsEnabled() {
-   return base::FeatureList::IsEnabled(kVerticalTabs);
- }
- 
-+bool AreHeliumVerticalTabsEnabled() {
-+  return base::CommandLine::ForCurrentProcess()->HasSwitch("helium-vertical-tabs");
-+}
-+
- }  // namespace tabs
---- a/chrome/browser/ui/tabs/features.h
-+++ b/chrome/browser/ui/tabs/features.h
-@@ -35,6 +35,7 @@ BASE_DECLARE_FEATURE(kVerticalTabs);
- extern bool CanShowTabSearchPositionSetting();
- extern bool AreTabGroupShortcutsEnabled();
- extern bool AreVerticalTabsEnabled();
-+extern bool AreHeliumVerticalTabsEnabled();
- 
- }  // namespace tabs
- 
 --- a/chrome/browser/ui/tabs/tab_style.cc
 +++ b/chrome/browser/ui/tabs/tab_style.cc
 @@ -169,8 +169,10 @@ SkColor TabStyle::GetTabBackgroundColor(
@@ -293,8 +251,7 @@
        static_cast<double>(
            attached_context_->GetTabAt(to_index)->bounds().width()) /
        TabStyle::Get()->GetStandardWidth(/*is_split=*/false) *
--      kHorizontalMoveThreshold);
-+      kHorizontalMoveThreshold);
+       kHorizontalMoveThreshold);
 +  }
  
    // Update the model, moving the WebContents from one index to another. Do this
@@ -871,30 +828,7 @@
        tab_style_(TabStyle::Get()),
 --- a/chrome/browser/ui/views/tabs/tab_strip.cc
 +++ b/chrome/browser/ui/views/tabs/tab_strip.cc
-@@ -59,7 +59,7 @@
- #include "chrome/browser/ui/view_ids.h"
- #include "chrome/browser/ui/views/frame/browser_view.h"
- #include "chrome/browser/ui/views/tabs/browser_tab_strip_controller.h"
--#include "chrome/browser/ui/views/tabs/compound_tab_container.h"
-+//#include "chrome/browser/ui/views/tabs/compound_tab_container.h"
- #include "chrome/browser/ui/views/tabs/dragging/tab_drag_controller.h"
- #include "chrome/browser/ui/views/tabs/tab.h"
- #include "chrome/browser/ui/views/tabs/tab_container_impl.h"
-@@ -136,10 +136,13 @@ std::unique_ptr<TabContainer> MakeTabCon
-     TabStrip* tab_strip,
-     TabHoverCardController* hover_card_controller,
-     TabDragContext* drag_context) {
-+  /*
-   if (base::FeatureList::IsEnabled(tabs::kSplitTabStrip)) {
-+
-     return std::make_unique<CompoundTabContainer>(
-         *tab_strip, hover_card_controller, drag_context, *tab_strip, tab_strip);
-   }
-+  */
-   return std::make_unique<TabContainerImpl>(
-       *tab_strip, hover_card_controller, drag_context, *tab_strip, tab_strip);
- }
-@@ -177,6 +180,15 @@ class TabStrip::TabDragContextImpl : pub
+@@ -180,6 +180,15 @@ class TabStrip::TabDragContextImpl : pub
  
    gfx::Size CalculatePreferredSize(
        const views::SizeBounds& available_size) const override {
@@ -910,7 +844,7 @@
      int max_child_x = 0;
      for (views::View* child : children()) {
        if (!views::IsViewClass<TabSlotView>(child)) {
-@@ -185,7 +197,7 @@ class TabStrip::TabDragContextImpl : pub
+@@ -188,7 +197,7 @@ class TabStrip::TabDragContextImpl : pub
        max_child_x = std::max(max_child_x, child->bounds().right());
      }
  
@@ -919,7 +853,7 @@
    }
  
    bool OnMouseDragged(const ui::MouseEvent& event) override {
-@@ -506,14 +518,28 @@ class TabStrip::TabDragContextImpl : pub
+@@ -509,14 +518,28 @@ class TabStrip::TabDragContextImpl : pub
          tab_strip_->width());
    }
  
@@ -948,7 +882,7 @@
    int GetInsertionIndexForDraggedBounds(const gfx::Rect& dragged_bounds,
                                          std::vector<TabSlotView*> dragged_views,
                                          int num_dragged_tabs) const override {
-@@ -557,8 +583,15 @@ class TabStrip::TabDragContextImpl : pub
+@@ -560,8 +583,15 @@ class TabStrip::TabDragContextImpl : pub
      std::vector<gfx::Rect> bounds;
      const int overlap = TabStyle::Get()->GetTabOverlap();
      int x = 0;
@@ -964,7 +898,7 @@
        bounds.emplace_back(x, height() - view->height(), width, view->height());
        x += width - overlap;
      }
-@@ -900,6 +933,21 @@ class TabStrip::TabDragContextImpl : pub
+@@ -903,6 +933,21 @@ class TabStrip::TabDragContextImpl : pub
          continue;
        }
  
@@ -986,7 +920,7 @@
        // If there's a group header here, and we're dragging a group, we might
        // end up on either side of that header. Check both cases to find the
        // best option.
-@@ -917,7 +965,10 @@ class TabStrip::TabDragContextImpl : pub
+@@ -920,7 +965,10 @@ class TabStrip::TabDragContextImpl : pub
                 : 0);
        const int right_distance = std::abs(dragged_bounds.x() - right_ideal_x);
  
@@ -998,7 +932,7 @@
        if (distance < min_distance) {
          min_distance = distance;
          min_distance_index = candidate_index;
-@@ -1015,6 +1066,24 @@ class TabStrip::TabDragContextImpl : pub
+@@ -1018,6 +1066,24 @@ class TabStrip::TabDragContextImpl : pub
      return ideal_x - tab_overlap;
    }
  
@@ -1023,7 +957,7 @@
    // There might be a group starting at `candidate_index`. If there is,
    // this determines how the ideal x would change if the dragged tabs were
    // added to that group, thereby moving them to that header's right.
-@@ -1042,6 +1111,26 @@ class TabStrip::TabDragContextImpl : pub
+@@ -1045,6 +1111,26 @@ class TabStrip::TabDragContextImpl : pub
      return header_width;
    }
  
@@ -1050,7 +984,7 @@
    const raw_ptr<TabStrip, DanglingUntriaged> tab_strip_;
  
    // Responsible for animating tabs during drag sessions.
-@@ -1111,8 +1200,20 @@ void TabStrip::SetAvailableWidthCallback
+@@ -1114,8 +1200,20 @@ void TabStrip::SetAvailableWidthCallback
    tab_container_->SetAvailableWidthCallback(available_width_callback);
  }
  
@@ -1071,7 +1005,7 @@
    int width = 0;
    for (const TabSlotView* view : views) {
      width += view->width();
-@@ -2152,7 +2253,7 @@ gfx::Size TabStrip::GetMinimumSize() con
+@@ -2155,7 +2253,7 @@ gfx::Size TabStrip::GetMinimumSize() con
    // `tab_container_` and `drag_context_` overlap (both share TabStrip's
    // origin), so we need to be able to cover the union of their bounds.
    gfx::Size min_size = tab_container_->GetMinimumSize();
@@ -1080,7 +1014,7 @@
  
    return min_size;
  }
-@@ -2168,6 +2269,13 @@ gfx::Size TabStrip::CalculatePreferredSi
+@@ -2171,6 +2269,13 @@ gfx::Size TabStrip::CalculatePreferredSi
  }
  
  void TabStrip::Layout(PassKey) {

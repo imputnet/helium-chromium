@@ -223,4 +223,6 @@ helium/ui/clean-incognito-guest-ntp.patch
 helium/ui/enable-fluent-scrollbar.patch
 helium/ui/helium-color-scheme.patch
 helium/ui/improve-flags-webui.patch
-helium/ui/vertical-tabs.patch
+helium/ui/vertical-tabs/disable-compound-tab-container.patch
+helium/ui/vertical-tabs/feature-flag.patch
+helium/ui/vertical-tabs/ui.patch
