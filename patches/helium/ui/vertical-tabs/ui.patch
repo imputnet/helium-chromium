@@ -887,25 +887,29 @@
  #include "chrome/browser/ui/views/frame/browser_non_client_frame_view.h"
  #include "chrome/browser/ui/views/tabs/tab_group_header.h"
  #include "chrome/browser/ui/views/tabs/tab_group_highlight.h"
-@@ -39,19 +40,26 @@ TabGroupViews::TabGroupViews(views::View
+@@ -39,19 +40,25 @@ TabGroupViews::TabGroupViews(views::View
    header_ = container_view->AddChildView(std::move(header));
    underline_ = container_view->AddChildView(
        std::make_unique<TabGroupUnderline>(this, group_, *style));
+-  drag_underline_ = drag_container_view->AddChildView(
+-      std::make_unique<TabGroupUnderline>(this, group_, *style));
+-  highlight_ = drag_container_view->AddChildView(
+-      std::make_unique<TabGroupHighlight>(this, group_, *style));
+-  highlight_->SetVisible(false);
 +
 +  if (!tabs::AreHeliumVerticalTabsEnabled()) {
-+
-   drag_underline_ = drag_container_view->AddChildView(
-       std::make_unique<TabGroupUnderline>(this, group_, *style));
-   highlight_ = drag_container_view->AddChildView(
-       std::make_unique<TabGroupHighlight>(this, group_, *style));
-   highlight_->SetVisible(false);
-+
++    drag_underline_ = drag_container_view->AddChildView(
++        std::make_unique<TabGroupUnderline>(this, group_, *style));
++    highlight_ = drag_container_view->AddChildView(
++        std::make_unique<TabGroupHighlight>(this, group_, *style));
++    highlight_->SetVisible(false);
 +  }
  }
  
  TabGroupViews::~TabGroupViews() {
    header_->parent()->RemoveChildViewT(std::exchange(header_, nullptr));
    underline_->parent()->RemoveChildViewT(std::exchange(underline_, nullptr));
++
 +  if (!tabs::AreHeliumVerticalTabsEnabled()) {
    drag_underline_->parent()->RemoveChildViewT(
        std::exchange(drag_underline_, nullptr));
@@ -914,7 +918,7 @@
  }
  
  void TabGroupViews::UpdateBounds() {
-@@ -64,6 +72,8 @@ void TabGroupViews::UpdateBounds() {
+@@ -64,6 +71,8 @@ void TabGroupViews::UpdateBounds() {
        GetLeadingTrailingGroupViews();
    underline_->UpdateBounds(leading_group_view, trailing_group_view);
  
@@ -923,7 +927,7 @@
    auto [leading_dragged_group_view, trailing_dragged_group_view] =
        GetLeadingTrailingDraggedGroupViews();
    drag_underline_->UpdateBounds(leading_dragged_group_view,
-@@ -110,7 +120,7 @@ void TabGroupViews::OnGroupVisualsChange
+@@ -110,7 +119,7 @@ void TabGroupViews::OnGroupVisualsChange
  
    header_->VisualsChanged();
    underline_->SchedulePaint();
@@ -932,7 +936,7 @@
  }
  
  gfx::Rect TabGroupViews::GetBounds() const {
-@@ -138,6 +148,7 @@ SkColor TabGroupViews::GetGroupColor() c
+@@ -138,6 +147,7 @@ SkColor TabGroupViews::GetGroupColor() c
  }
  
  bool TabGroupViews::InTearDown() const {
@@ -940,22 +944,24 @@
    return !header_ || !header_->GetWidget() || !drag_underline_->GetWidget();
  }
  
-@@ -145,10 +156,14 @@ std::tuple<const views::View*, const vie
+@@ -145,10 +155,14 @@ std::tuple<const views::View*, const vie
  TabGroupViews::GetLeadingTrailingGroupViews() const {
    std::vector<raw_ptr<views::View, VectorExperimental>> children =
        underline_->parent()->children();
+-  std::vector<raw_ptr<views::View, VectorExperimental>> dragged_children =
 +
 +  if (!tabs::AreHeliumVerticalTabsEnabled()) {
-   std::vector<raw_ptr<views::View, VectorExperimental>> dragged_children =
++    std::vector<raw_ptr<views::View, VectorExperimental>> dragged_children =
        drag_underline_->parent()->children();
-   children.insert(children.end(), dragged_children.begin(),
+-  children.insert(children.end(), dragged_children.begin(),
++    children.insert(children.end(), dragged_children.begin(),
                    dragged_children.end());
 +  }
 +
    return GetLeadingTrailingGroupViews(children);
  }
  
-@@ -178,6 +193,22 @@ TabGroupViews::GetLeadingTrailingGroupVi
+@@ -178,6 +192,22 @@ TabGroupViews::GetLeadingTrailingGroupVi
      gfx::Rect child_widget_bounds =
          child->ConvertRectToWidget(child->GetLocalBounds());
  
@@ -1069,7 +1075,40 @@
        bounds.emplace_back(x, height() - view->height(), width, view->height());
        x += width - overlap;
      }
-@@ -903,6 +933,21 @@ class TabStrip::TabDragContextImpl : pub
+@@ -620,9 +650,12 @@ class TabStrip::TabDragContextImpl : pub
+       dragged_view->set_dragging(true);
+       if (TabGroupHeader* header =
+               views::AsViewClass<TabGroupHeader>(dragged_view)) {
+-        tab_strip_->tab_container_->GetGroupViews(header->group().value())
+-            ->highlight()
+-            ->SetVisible(true);
++        if (!tabs::AreHeliumVerticalTabsEnabled()) {
++          // highlight is null when vertical tabs are enabled.
++          tab_strip_->tab_container_->GetGroupViews(header->group().value())
++              ->highlight()
++              ->SetVisible(true);
++        }
+         // Make sure the bounds of the group views are up to date right now
+         // instead of waiting for subsequent drag events - if we are dragging a
+         // window by a group header, we won't get any more events. See
+@@ -660,10 +693,12 @@ class TabStrip::TabDragContextImpl : pub
+       const TabGroupHeader* const header =
+           views::AsViewClass<TabGroupHeader>(slot_view);
+       if (header) {
+-        // Disable the group highlight now that the drag is ended.
+-        tab_strip_->tab_container_->GetGroupViews(header->group().value())
+-            ->highlight()
+-            ->SetVisible(false);
++        if (!tabs::AreHeliumVerticalTabsEnabled()) {
++          // Disable the group highlight now that the drag is ended.
++          tab_strip_->tab_container_->GetGroupViews(header->group().value())
++              ->highlight()
++              ->SetVisible(false);
++        }
+         ideal_bounds =
+             tab_strip_->tab_container_->GetIdealBounds(header->group().value());
+       } else {
+@@ -903,6 +938,21 @@ class TabStrip::TabDragContextImpl : pub
          continue;
        }
  
@@ -1091,7 +1130,7 @@
        // If there's a group header here, and we're dragging a group, we might
        // end up on either side of that header. Check both cases to find the
        // best option.
-@@ -920,7 +965,10 @@ class TabStrip::TabDragContextImpl : pub
+@@ -920,7 +970,10 @@ class TabStrip::TabDragContextImpl : pub
                 : 0);
        const int right_distance = std::abs(dragged_bounds.x() - right_ideal_x);
  
@@ -1103,7 +1142,7 @@
        if (distance < min_distance) {
          min_distance = distance;
          min_distance_index = candidate_index;
-@@ -1018,6 +1066,24 @@ class TabStrip::TabDragContextImpl : pub
+@@ -1018,6 +1071,24 @@ class TabStrip::TabDragContextImpl : pub
      return ideal_x - tab_overlap;
    }
  
@@ -1128,7 +1167,7 @@
    // There might be a group starting at `candidate_index`. If there is,
    // this determines how the ideal x would change if the dragged tabs were
    // added to that group, thereby moving them to that header's right.
-@@ -1045,6 +1111,26 @@ class TabStrip::TabDragContextImpl : pub
+@@ -1045,6 +1116,26 @@ class TabStrip::TabDragContextImpl : pub
      return header_width;
    }
  
@@ -1155,7 +1194,7 @@
    const raw_ptr<TabStrip, DanglingUntriaged> tab_strip_;
  
    // Responsible for animating tabs during drag sessions.
-@@ -1114,8 +1200,20 @@ void TabStrip::SetAvailableWidthCallback
+@@ -1114,8 +1205,20 @@ void TabStrip::SetAvailableWidthCallback
    tab_container_->SetAvailableWidthCallback(available_width_callback);
  }
  
@@ -1176,7 +1215,7 @@
    int width = 0;
    for (const TabSlotView* view : views) {
      width += view->width();
-@@ -2155,7 +2253,7 @@ gfx::Size TabStrip::GetMinimumSize() con
+@@ -2155,7 +2258,7 @@ gfx::Size TabStrip::GetMinimumSize() con
    // `tab_container_` and `drag_context_` overlap (both share TabStrip's
    // origin), so we need to be able to cover the union of their bounds.
    gfx::Size min_size = tab_container_->GetMinimumSize();
@@ -1185,7 +1224,7 @@
  
    return min_size;
  }
-@@ -2171,6 +2269,13 @@ gfx::Size TabStrip::CalculatePreferredSi
+@@ -2171,6 +2274,13 @@ gfx::Size TabStrip::CalculatePreferredSi
  }
  
  void TabStrip::Layout(PassKey) {
