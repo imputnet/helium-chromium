@@ -1,5 +1,9 @@
 # -*- coding: UTF-8 -*-
 
+# Copyright 2025 The Helium Authors
+# You can use, redistribute, and/or modify this source code under
+# the terms of the GPL-3.0 license that can be found in the LICENSE file.
+
 # Copyright (c) 2019 The ungoogled-chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE.ungoogled_chromium file.
@@ -11,6 +15,7 @@ import os
 import shutil
 import subprocess
 import tarfile
+import zipfile
 from pathlib import Path, PurePosixPath
 
 from _common import (USE_REGISTRY, PlatformEnum, ExtractorEnum, get_logger, get_running_platform)
@@ -238,6 +243,23 @@ def extract_tar_file(archive_path, output_dir, relative_to, extractors=None):
         raise NotImplementedError(current_platform)
     # Fallback to Python-based extractor on all platforms
     _extract_tar_with_python(archive_path, output_dir, relative_to)
+
+
+# pylint: disable=unused-argument
+def extract_zip_file(archive_path, output_dir, relative_to, extractors=None):
+    """
+    Extracts archives using the pure Python zip extractor
+    """
+    get_logger().debug('Using pure Python zip extractor')
+
+    with zipfile.ZipFile(str(archive_path), 'r') as zip_file_obj:
+        for filename in zip_file_obj.namelist():
+            try:
+                zipinfo = zip_file_obj.getinfo(filename)
+                zip_file_obj.extract(zipinfo, output_dir, None)
+            except BaseException:
+                get_logger().exception('Exception thrown for zip member: %s', filename)
+                raise
 
 
 def extract_with_7z(archive_path, output_dir, relative_to, extractors=None):

@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
+# Copyright 2025 The Helium Authors
+# You can use, redistribute, and/or modify this source code under
+# the terms of the GPL-3.0 license that can be found in the LICENSE file.
+
 # Copyright (c) 2019 The ungoogled-chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE.ungoogled_chromium file.
@@ -21,7 +25,7 @@ from pathlib import Path
 
 from _common import ENCODING, USE_REGISTRY, ExtractorEnum, PlatformEnum, \
     get_logger, get_chromium_version, get_running_platform, add_common_params
-from _extraction import extract_tar_file, extract_with_7z, extract_with_winrar
+from _extraction import extract_tar_file, extract_zip_file, extract_with_7z, extract_with_winrar
 
 sys.path.insert(0, str(Path(__file__).parent / 'third_party'))
 import schema #pylint: disable=wrong-import-position, wrong-import-order
@@ -336,6 +340,14 @@ def check_downloads(download_info, cache_dir, components, chunk_bytes=262144):
                 raise HashMismatchError(download_path)
 
 
+def get_extractor_for(filename):
+    """Determines the most appropriate default downloader for the format."""
+    if Path(filename).suffix == '.zip':
+        return ExtractorEnum.ZIP
+
+    return ExtractorEnum.TAR
+
+
 def unpack_downloads(download_info, cache_dir, components, output_dir, extractors=None):
     """
     Unpack downloads in the downloads cache to output_dir. Assumes all downloads are retrieved.
@@ -355,8 +367,12 @@ def unpack_downloads(download_info, cache_dir, components, output_dir, extractor
         download_path = cache_dir / download_properties.download_filename
         get_logger().info('Unpacking "%s" to %s ...', download_name,
                           download_properties.output_path)
-        extractor_name = download_properties.extractor or ExtractorEnum.TAR
-        if extractor_name == ExtractorEnum.SEVENZIP:
+        extractor_name = download_properties.extractor \
+                            or get_extractor_for(download_properties.download_filename)
+
+        if extractor_name == ExtractorEnum.ZIP:
+            extractor_func = extract_zip_file
+        elif extractor_name == ExtractorEnum.SEVENZIP:
             extractor_func = extract_with_7z
         elif extractor_name == ExtractorEnum.WINRAR:
             extractor_func = extract_with_winrar

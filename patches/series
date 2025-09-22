@@ -107,6 +107,7 @@ extra/ungoogled-chromium/disable-ai-search-shortcuts.patch
 
 extra/brave/chrome-importer-files.patch
 extra/brave/custom-importer.patch
+extra/brave/fix-component-content-settings-store.patch
 
 helium/core/add-zen-importer.patch
 helium/core/disable-unsupported-importers.patch
@@ -153,6 +154,12 @@ helium/core/add-disable-ech-flag.patch
 helium/core/disable-outdated-build-detector.patch
 helium/core/remove-dead-toolbar-actions.patch
 helium/core/protect-browser-keyboard-shortcuts.patch
+helium/core/add-component-l10n-support.patch
+helium/core/ublock-setup-sources.patch
+helium/core/ublock-install-as-component.patch
+helium/core/ublock-reconfigure-defaults.patch
+helium/core/ublock-migrate-prefs.patch
+helium/core/ublock-helium-services.patch
 
 helium/settings/move-search-suggest.patch
 helium/settings/remove-autofill.patch
@@ -172,7 +179,6 @@ helium/settings/remove-dead-imports.patch
 
 helium/hop/setup.patch
 helium/hop/disable-password-manager.patch
-helium/hop/preinstall-ublock-origin.patch
 
 helium/ui/update-cr-components.patch
 helium/ui/always-use-better-ntp.patch
@@ -223,6 +229,7 @@ helium/ui/clean-incognito-guest-ntp.patch
 helium/ui/enable-fluent-scrollbar.patch
 helium/ui/helium-color-scheme.patch
 helium/ui/improve-flags-webui.patch
+helium/ui/ublock-show-in-settings.patch
 helium/ui/vertical-tabs/disable-compound-tab-container.patch
 helium/ui/vertical-tabs/feature-flag.patch
 helium/ui/vertical-tabs/ui.patch
