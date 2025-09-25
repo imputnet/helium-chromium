@@ -1385,7 +1385,36 @@
  #include "chrome/browser/ui/views/frame/browser_non_client_frame_view.h"
  #include "chrome/browser/ui/views/frame/browser_view.h"
  #include "chrome/browser/ui/views/frame/top_container_background.h"
-@@ -1046,6 +1047,8 @@ void TabStyleViewsImpl::PaintBackgroundS
+@@ -304,12 +305,22 @@ SkPath TabStyleViewsImpl::GetPath(TabSty
+     }
+ 
+     if (tab()->split().has_value()) {
+-      if (IsLeftSplitTab(tab())) {
+-        top_right_corner_radius = 0;
+-        bottom_right_corner_radius = 0;
+-      } else if (IsRightSplitTab(tab())) {
+-        top_left_corner_radius = 0;
+-        bottom_left_corner_radius = 0;
++      if (tabs::AreHeliumVerticalTabsEnabled()) {
++        if (IsLeftSplitTab(tab())) {
++          bottom_left_corner_radius = 0;
++          bottom_right_corner_radius = 0;
++        } else if (IsRightSplitTab(tab())) {
++          top_left_corner_radius = 0;
++          top_right_corner_radius = 0;
++        }
++      } else {
++        if (IsLeftSplitTab(tab())) {
++          top_right_corner_radius = 0;
++          bottom_right_corner_radius = 0;
++        } else if (IsRightSplitTab(tab())) {
++          top_left_corner_radius = 0;
++          bottom_left_corner_radius = 0;
++        }
+       }
+     }
+ 
+@@ -1046,6 +1057,8 @@ void TabStyleViewsImpl::PaintBackgroundS
  }
  
  void TabStyleViewsImpl::PaintSeparators(gfx::Canvas* canvas) const {
