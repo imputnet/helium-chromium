@@ -12,6 +12,26 @@
              kColorTabBackgroundInactiveFrameActive},
             {kColorTabBackgroundInactiveHoverFrameInactive,
              kColorTabBackgroundInactiveHoverFrameActive}}};
+--- a/chrome/browser/ui/views/frame/browser_frame_mac.mm
++++ b/chrome/browser/ui/views/frame/browser_frame_mac.mm
+@@ -15,6 +15,8 @@
+ #include "chrome/browser/ui/browser_command_controller.h"
+ #include "chrome/browser/ui/browser_commands.h"
+ #include "chrome/browser/ui/browser_window/public/browser_window_features.h"
++#include "chrome/browser/ui/tabs/features.h"
++#include "chrome/browser/ui/layout_constants.h"
+ #import "chrome/browser/ui/cocoa/browser_window_command_handler.h"
+ #import "chrome/browser/ui/cocoa/chrome_command_dispatcher_delegate.h"
+ #import "chrome/browser/ui/cocoa/touchbar/browser_window_touch_bar_controller.h"
+@@ -154,7 +156,7 @@ void BrowserFrameMac::GetWindowFrameTitl
+       browser_view_->frame()->GetFrameView()) {
+     *override_titlebar_height = true;
+     *titlebar_height =
+-        browser_view_->GetTabStripHeight() +
++        (tabs::AreHeliumVerticalTabsEnabled() ? GetLayoutConstant(TAB_STRIP_HEIGHT) : browser_view_->GetTabStripHeight()) +
+         browser_view_->frame()->GetFrameView()->GetTopInset(true);
+     if (!browser_view_->ShouldDrawTabStrip()) {
+       *titlebar_height +=
 --- a/chrome/browser/ui/views/frame/browser_root_view.cc
 +++ b/chrome/browser/ui/views/frame/browser_root_view.cc
 @@ -343,7 +343,7 @@ bool BrowserRootView::OnMouseWheel(const
