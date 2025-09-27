@@ -56,7 +56,15 @@
    BrowserView(const BrowserView&) = delete;
 --- a/chrome/browser/ui/views/frame/browser_view_layout.cc
 +++ b/chrome/browser/ui/views/frame/browser_view_layout.cc
-@@ -540,10 +540,22 @@ void BrowserViewLayout::LayoutTabStripRe
+@@ -528,6 +528,7 @@ void BrowserViewLayout::LayoutVerticalTa
+ void BrowserViewLayout::LayoutTabStripRegion(gfx::Rect& available_bounds) {
+   TRACE_EVENT0("ui", "BrowserViewLayout::LayoutTabStripRegion");
+   if (!delegate_->ShouldDrawTabStrip()) {
++    LOG(INFO) << "SHOULD NOT draw tab strip";
+     SetViewVisibility(tab_strip_region_view_, false);
+     tab_strip_region_view_->SetBounds(0, 0, 0, 0);
+     return;
+@@ -540,10 +541,22 @@ void BrowserViewLayout::LayoutTabStripRe
    if (web_app_frame_toolbar_) {
      tab_strip_region_bounds.Inset(gfx::Insets::TLBR(
          0, 0, 0, web_app_frame_toolbar_->GetPreferredSize().width()));
@@ -79,7 +87,7 @@
    } else {
      SetViewVisibility(tab_strip_region_view_, true);
      tab_strip_region_view_->SetBoundsRect(tab_strip_region_bounds);
-@@ -572,7 +584,7 @@ void BrowserViewLayout::LayoutToolbar(gf
+@@ -572,7 +585,7 @@ void BrowserViewLayout::LayoutToolbar(gf
    bool toolbar_visible = delegate_->IsToolbarVisible();
    SetViewVisibility(toolbar_, toolbar_visible);
  
@@ -88,7 +96,7 @@
      // When vertical tabs is enabled, the top element becomes the toolbar.
      // Because of this, it must now be aware of the location of the caption
      // buttons. We can reuse the calculation use by the TabStripRegionView to
-@@ -580,6 +592,7 @@ void BrowserViewLayout::LayoutToolbar(gf
+@@ -580,11 +593,13 @@ void BrowserViewLayout::LayoutToolbar(gf
      // caption button location directly.
      gfx::Rect toolbar_bounds(
          delegate_->GetBoundsForTabStripRegionInBrowserView());
@@ -96,12 +104,19 @@
      toolbar_bounds.set_x(available_bounds.x());
      toolbar_bounds.set_width(toolbar_bounds.width() -
                               BrowserView::kVerticalTabStripWidth);
-@@ -702,8 +715,9 @@ BrowserViewLayout::CalculateContentsCont
++    int height = toolbar_visible ? toolbar_bounds.height() : 0;
+     toolbar_->SetBounds(toolbar_bounds.x(), toolbar_bounds.y(),
+-                        toolbar_bounds.width(), toolbar_bounds.height());
++                        toolbar_bounds.width(), height);
+   } else {
+     int height = toolbar_visible ? toolbar_->GetPreferredSize().height() : 0;
+     int width = available_bounds.width();
+@@ -702,8 +717,9 @@ BrowserViewLayout::CalculateContentsCont
    contents_container_bounds.set_height(available_bounds.height() -
                                         available_bounds.y());
    int vertical_tab_offset = 0;
 -  if (tabs::AreVerticalTabsEnabled()) {
-+  if (tabs::AreVerticalTabsEnabled() || tabs::AreHeliumVerticalTabsEnabled()) {
++  if (tabs::AreVerticalTabsEnabled() || (delegate_->ShouldDrawTabStrip() && tabs::AreHeliumVerticalTabsEnabled())) {
      vertical_tab_offset = BrowserView::kVerticalTabStripWidth;
 +    contents_container_bounds.set_x(vertical_tab_offset);
      contents_container_bounds.set_width(available_bounds.width() -
